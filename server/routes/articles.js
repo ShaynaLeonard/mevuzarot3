@@ -4,11 +4,6 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 
-
-
-
-
-
 // variables
 const dataPath = './server/data/articles.json';
 
@@ -82,7 +77,7 @@ const articleUpdateSchema = yup.object({
 });
 
 const updateArticle = async (req,res) =>{
-    const articleId = req.params.id; //needs to be string!
+    const articleId = req.params.id;
     const detailToUpdate = req.body; 
     await articleUpdateSchema.validate(detailToUpdate);
 
@@ -116,24 +111,39 @@ const updateArticle = async (req,res) =>{
     }
 }; 
 
+//READ
+
+const getArticles = async (req, res) => {
+    fs.readFile(dataPath, 'utf8', (err, data) => {
+        if (err) {
+            console.log(err);
+            res.sendStatus(500);
+        }
+        else
+            res.send(!data ? JSON.parse("{}") : JSON.parse(data));
+    });
+}; 
+
+const getArticle = (req, res) => {
+    const articleId = req.params.id;
+
+    readFile(data => {
+        const article = data[articleId];
+        if (article) {
+            res.status(200).send(article);
+        } else {
+            res.status(404).send(`Article with ID ${articleId} not found`);
+        }
+    }, true);
+};
 
 module.exports = {
     CreateArticle,
     articleSchema,
     articleUpdateSchema, 
     updateArticle, 
-
-    //READ
-    getArticles: function (req, res) {
-        fs.readFile(dataPath, 'utf8', (err, data) => {
-            if (err) {
-                console.log(err);
-                res.sendStatus(500);
-            }
-            else
-                res.send(!data ? JSON.parse("{}") : JSON.parse(data));
-        });
-    },
+    getArticles, 
+    getArticle, 
 
 
     // UPDATE
