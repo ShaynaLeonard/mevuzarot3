@@ -30,16 +30,16 @@ const writeFile = (fileData, callback, filePath = dataPath, encoding = 'utf8') =
 };
 //CREATE
 const articleSchema = yup.object({
-    ID: yup.string().required(),
     title: yup.string().required(),
-    dateOfPublished: yup.date().required(),
+    publish_date: yup.date().required(),
     summary: yup.string().required(),
-    Author: yup.object({
-        nameAuthor: yup.string().required(),
-        authorEmail: yup.string().email().required(),
-        authorPhone: yup.string().required(),
-        authorHouseNum: yup.number().required(),
+    writer: yup.object({
+        name: yup.string().required(),
+        email: yup.string().email().required(),
+        mobile_phone: yup.string().required(),
+        home_phone: yup.number().required(),
     }),
+    ID: yup.string().required(),
 });
 
 const CreateArticle = async (req, res) => {
@@ -71,7 +71,7 @@ const CreateArticle = async (req, res) => {
 //UPDATE 
 const articleUpdateSchema = yup.object({
     title: yup.string(),
-    dateOfPublished: yup.date(),
+    publish_date: yup.date(),
     summary: yup.string(),
 });
 
@@ -111,7 +111,6 @@ const updateArticle = async (req,res) =>{
 }; 
 
 //READ
-
 const getArticles = async (req, res) => {
     fs.readFile(dataPath, 'utf8', (err, data) => {
         if (err) {

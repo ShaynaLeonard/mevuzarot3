@@ -1,4 +1,16 @@
 {
+  "123456": {
+    "title": "Sample Article",
+    "publish_date": "2024-03-01",
+    "summary": "This is a sample article.",
+    "writer": {
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "mobile_phone": "1234567890",
+      "home_phone": 9876543210
+    },
+    "ID": "123456"
+  },
   "5555555555555555": {
     "password": "5555555555",
     "profession": "UI desginer",
@@ -27,11 +39,5 @@
     "password": "ytryrtytryrtyrt",
     "profession": "5555555555555",
     "id": "344244354535346666"
-  },
-  "34424435453534777": {
-    "name": "misssssssssss",
-    "password": "777777777777777777777777777",
-    "profession": "7777777777777777777",
-    "id": "34424435453534777"
   }
 }
