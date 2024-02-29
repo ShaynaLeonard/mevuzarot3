@@ -10,8 +10,6 @@ router.post('/articles', articlesRoutes.CreateArticle);
 router.get('/articles/:id', articlesRoutes.getArticle);
 router.get('/articles', articlesRoutes.getArticles);
 // router.delete('/articles/:id/images/:url', articlesRoutes.deleteImageFromArticle);
-// router.delete('/articles/:id', articlesRoutes.deleteArticle);
-
-//
+router.delete('/articles/:id', articlesRoutes.deleteArticle);
 
 module.exports = router;

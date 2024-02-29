@@ -1,21 +1,4 @@
 {
-  "123": {
-    "ID": "123",
-    "title": "shayna",
-    "dateOfPublished": "2024-02-02",
-    "summary": "say hello venice",
-    "Author": {
-      "nameAuthor": "levi",
-      "authorEmail": "levi@gmail.com",
-      "authorPhone": "050",
-      "authorHouseNum": 6
-    }
-  },
-  "1236666666": {
-    "password": "5555555555555",
-    "profession": "UI desginer",
-    "id": "1236666666"
-  },
   "5555555555555555": {
     "password": "5555555555",
     "profession": "UI desginer",

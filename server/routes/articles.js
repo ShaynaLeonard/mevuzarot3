@@ -42,7 +42,6 @@ const articleSchema = yup.object({
     }),
 });
 
-// CreateArticle function
 const CreateArticle = async (req, res) => {
     const ArticleDetails = req.body; // Extract payload from request body
 
@@ -137,6 +136,22 @@ const getArticle = (req, res) => {
     }, true);
 };
 
+//DELETE
+const deleteArticle = (req, res) => {
+    const articleId = req.params.id;
+
+    readFile(data => {
+        if (data[articleId]) {
+            delete data[articleId];
+            writeFile(JSON.stringify(data, null, 2), () => {
+                res.status(200).send(`Article with ID ${articleId} deleted`);
+            });
+        } else {
+            res.status(404).send(`Article with ID ${articleId} not found`);
+        }
+    }, true);
+};
+
 module.exports = {
     CreateArticle,
     articleSchema,
@@ -144,6 +159,7 @@ module.exports = {
     updateArticle, 
     getArticles, 
     getArticle, 
+    deleteArticle, 
 
 
     // UPDATE
