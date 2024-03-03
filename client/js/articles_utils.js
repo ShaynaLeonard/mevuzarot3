@@ -1,64 +1,92 @@
-// $(document).ready(function () {
-   
-//     $("form[name='user_form']").validate({
-//         // Specify validation rules
-//         rules: {
-//           "name":{
-//             minlength: 5
-//           },
-//           "id_field": {
-//             required: true,
-//             digits: true,
-//             minlength: 6
-//           },
-//           "email":{
-//             "email":true
-//           }
-//         },
-//         // Specify validation error messages
-//         messages: {       
-//           name: "Your name must be at least 5 characters long",
-//           id_field:{
-//             digits:"Please enter only digits",
-//             minlength: "Your name must be at least 6 characters long"
-//           },
-//           email: "email structure is some@domain "
-//         }
-//       });
+$(document).ready(function () {
+    // Fetch articles data
+    $.ajax({
+      url: '/articles', 
+      dataType: 'json',
+      success: function (articlesData) {
+        order = "ascending"
+        category = "dateOfPublication"
+        displayArticles(articlesData);
+      },
+      error: function (err) {
+        console.log('Error fetching articles data', err);
+      }
+    });
 
-//     // process the form
-//     $('#article_form').submit(function (event) {
-//         if(!$("#article_form").valid()) return;
 
-//         console.log("in submit");
-        
-//         // process the form
-//         $.ajax({
-//             type: 'POST', // define the type of HTTP verb we want to use (POST for our form)
-//             url: '/articles', // the url where we want to POST
-//             contentType: 'application/json',
-//             data: JSON.stringify({
-//                 "name": $("#username").val(),
-//                 "password": $("#password").val(),
-//                 "profession": $("#profession").val(),
-//                 "id": $("#id_field").val(),
-//                 "email": $("#email").val(),
-//             }),
-//             processData: false,            
-//            // dataType: 'json', // what type of data do we expect back from the server
-//             encode: true,
-//             success: function( data, textStatus, jQxhr ){
-//                 console.log(data);
-//                 location.href = "/main";
+    // Save display changes button click event
+  $("#saveDisplayChanges").click(function () {
 
-//             },
-//             error: function( jqXhr, textStatus, errorThrown ){
-//                 console.log( errorThrown );
-//             }
-//         })
-          
-//         // stop the form from submitting the normal way and refreshing the page
-//         event.preventDefault();
-//     });
+    // Get selected order and category values
+    var order = $('input[name="order"]:checked').val();
+    var category = $('input[name="catergory"]:checked').val();
+    console.log("order=", order)
+    console.log("catergory=", category)
 
-// });
+    
+    // displayArticles(order, category);
+
+
+  });
+});
+
+  
+  
+  // // Function to display articles
+  // function displayArticles(articlesData) {
+  //   var articleList = $('#articleList');
+  
+  //   $.each(articlesData, function (articleId, article) {
+  //     var articleHtml = `
+  //       <div>
+  //         <h3>Article ID: ${article.id}</h3>
+  //         <p>Title: ${article.title}</p>
+  //         <p>Writer's Name: ${article.writer.name}</p>
+  //         <p>Publish Date: ${article.publish_date}</p>
+  //       </div>
+  //       <hr>
+  //     `;
+  
+  //     articleList.append(articleHtml);
+  //   });
+  // }
+
+  function displayArticles(articlesData, order, category) {
+    var articleList = $('#articleList');
+  
+    // Convert articlesData to an array for sorting
+    var articlesArray = Object.values(articlesData);
+  
+    // Sort articles based on category and order
+    articlesArray.sort(function (a, b) {
+      if (category === 'title') {
+        // Sort by title
+        return order === 'ascending' ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title);
+      } else if (category === 'dateOfPublication') {
+        // Sort by date of publication
+        return order === 'ascending' ? new Date(a.publish_date) - new Date(b.publish_date) : new Date(b.publish_date) - new Date(a.publish_date);
+      }
+      // Default to no sorting
+      return 0;
+    });
+  
+    // Clear existing content in the articleList
+    articleList.empty();
+  
+    // Display sorted articles
+    $.each(articlesArray, function (index, article) {
+      var articleHtml = `
+        <div>
+          <h3>Article ID: ${article.id}</h3>
+          <p>Title: ${article.title}</p>
+          <p>Writer's Name: ${article.writer.name}</p>
+          <p>Publish Date: ${article.publish_date}</p>
+        </div>
+        <hr>
+      `;
+  
+      articleList.append(articleHtml);
+    });
+  }
+  
+  

@@ -1,0 +1,5 @@
+.displaySetting {
+    display: inline-block; 
+    width: 30%; /* Set your desired width percentage */
+    margin-right: 2%; /* Set your desired margin between the divs */
+  }

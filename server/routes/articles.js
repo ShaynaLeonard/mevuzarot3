@@ -52,7 +52,13 @@ const CreateArticle = async (req, res) => {
         // Read data from file
         readFile(data => {
             // Add the new article
-            data[ArticleDetails.ID] = ArticleDetails;
+            data[ArticleDetails.ID] = {
+                title: ArticleDetails.title,
+                publish_date: ArticleDetails.publish_date,
+                writer: ArticleDetails.writer,
+                images: [], // Empty array for images
+                id: ArticleDetails.ID,
+            };
 
             // Write updated data to file
             writeFile(JSON.stringify(data, null, 2), () => {
@@ -76,25 +82,21 @@ const articleUpdateSchema = yup.object({
 });
 
 const updateArticle = async (req,res) =>{
-    const articleId = req.params.id;
+    const articleId = req.params["id"];
     const detailToUpdate = req.body; 
     await articleUpdateSchema.validate(detailToUpdate);
 
     try{
         readFile(data => {
             if (data[articleId]){
-                console.log("found the article")
                 if(detailToUpdate.title){
                     data[articleId].title = detailToUpdate.title; 
-                    console.log("has title")
                 }
                 if(detailToUpdate.dateOfPublished){
                     data[articleId].dateOfPublished = detailToUpdate.dateOfPublished; 
-                    console.log("has date published")
                 }
                 if(detailToUpdate.summary){
                     data[articleId].summary = detailToUpdate.summary; 
-                    console.log("has summary")
                 }
             }
             writeFile(JSON.stringify(data, null, 2), () => {
@@ -109,6 +111,53 @@ const updateArticle = async (req,res) =>{
         res.sendStatus(400);
     }
 }; 
+
+const AddImagesToArticle = async (req, res) => {
+    const articleId = req.params["id"];
+
+    const thumb_url = req.body["thumb_url"]; 
+    const id = req.body["id"]; 
+    const description = req.body["description"]; 
+
+
+    try {
+        // Read data from file
+        readFile(data => {
+            // Check if the article exists
+            if (data[articleId]) {
+                const article = data[articleId];
+
+                // Check if the image with the specified ID already exists in the article
+                const imageExists = article.images.some(image => image.id === id);
+
+                if (!imageExists) {
+                    // Add the new image details to the article's images array
+                    article.images.push({
+                        thumb_url: thumb_url,
+                        id: id, 
+                        description: description,
+                    });
+
+                    // Write updated data to file
+                    writeFile(JSON.stringify(data, null, 2), () => {
+                        console.log(`Image ${id} added to article ${articleId}`);
+                        res.status(200).send(`Image ${id} added to article ${articleId}`);
+                    });
+                } else {
+                    // Image with the same ID already exists in the article
+                    res.status(400).send(`Image ${id} already exists in article ${articleId}`);
+                }
+            } else {
+                // Article not found
+                res.status(404).send(`Article ${articleId} not found`);
+            }
+        }, true);
+    } catch (error) {
+        console.error(error);
+        res.sendStatus(400);
+    }
+};
+
 
 //READ
 const getArticles = async (req, res) => {
@@ -151,6 +200,44 @@ const deleteArticle = (req, res) => {
     }, true);
 };
 
+const deleteImageFromArticle = async (req, res) => {
+    const articleId = req.params["id"];
+    const imageId = req.params["imageId"]; 
+    try {
+        // Read data from file
+        readFile(data => {
+            // Check if the article exists
+            if (data[articleId]) {
+                const article = data[articleId];
+
+                // Find the index of the image with the specified thumb_url
+                const imageIndex = article.images.findIndex(image => image.id === imageId);
+
+                if (imageIndex !== -1) {
+                    // Remove the image from the images array
+                    article.images.splice(imageIndex, 1);
+
+                    // Write updated data to file
+                    writeFile(JSON.stringify(data, null, 2), () => {
+                        console.log(`Image ${imageId} deleted from article ${articleId}`);
+                        res.status(200).send(`Image ${imageId} deleted from article ${articleId}`);
+                    });
+                } else {
+                    // Image not found in the article
+                    res.status(404).send(`Image ${imageId} not found in article ${articleId}`);
+                }
+            } else {
+                // Article not found
+                res.status(404).send(`Article ${articleId} not found`);
+            }
+        }, true);
+    } catch (error) {
+        console.error(error);
+        res.sendStatus(400);
+    }
+};
+
+
 module.exports = {
     CreateArticle,
     articleSchema,
@@ -159,40 +246,7 @@ module.exports = {
     getArticles, 
     getArticle, 
     deleteArticle, 
+    deleteImageFromArticle, 
+    AddImagesToArticle
 
-
-    // UPDATE
-    update_user: function (req, res) {
-
-        readFile(data => {
-
-            // add the new user
-            const userId = req.params["id"];
-            if (data[userId])
-                data[userId] = req.body;
-            else res.sendStatus(400);
-
-            console.log("after if")
-
-            writeFile(JSON.stringify(data, null, 2), () => {
-                res.status(200).send(`users id:${userId} updated`);
-            });
-        },
-            true);
-    },
-    // DELETE
-    delete_user: function (req, res) {
-
-        readFile(data => {
-
-            // add the new user
-            const userId = req.params["id"];
-            delete data[userId];
-
-            writeFile(JSON.stringify(data, null, 2), () => {
-                res.status(200).send(`users id:${userId} removed`);
-            });
-        },
-            true);
-    }
 };

@@ -9,9 +9,11 @@ const port = 3001;
 const app=express();
 
 app.use('/main', express.static(path.join(__dirname, 'client/html/index.html')));
-app.use('/list_articles', express.static(path.join(__dirname, 'client/html/index.html')));
+app.use('/list', express.static(path.join(__dirname, 'client/html/index.html'))); // Serve index.html for /list
 
-app.use('/add_articles', express.static(path.join(__dirname, 'client/html/add_article_form.html')));
+app.use('/list_articles', express.static(path.join(__dirname, 'client/html/list.html')));
+
+//app.use('/add_articles', express.static(path.join(__dirname, 'client/html/add_article_form.html')));
 
 app.use('/js', express.static(path.join(__dirname, 'client/js')));
 

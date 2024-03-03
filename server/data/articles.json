@@ -1,43 +1,32 @@
 {
-  "123456": {
+  "article_ID_1": {
     "title": "Sample Article",
-    "publish_date": "2024-03-01",
-    "summary": "This is a sample article.",
+    "publish_date": "2024-03-03",
     "writer": {
       "name": "John Doe",
       "email": "john.doe@example.com",
-      "mobile_phone": "1234567890",
-      "home_phone": 9876543210
+      "mobile_phone": "123456789",
+      "home_phone": 987654321
     },
-    "ID": "123456"
+    "images": [],
+    "id": "article_ID_1"
   },
-  "5555555555555555": {
-    "password": "5555555555",
-    "profession": "UI desginer",
-    "id": "5555555555555555"
-  },
-  "5555555555": {
-    "name": "55wwwwwwwwwwwww",
-    "password": "bbbbbbbb",
-    "profession": "UI desginer",
-    "id": "5555555555"
-  },
-  "3333333333333333333": {
-    "name": "ffasdsdsadasdsa",
-    "password": "3333333333333",
-    "profession": "UI desginer",
-    "id": "3333333333333333333"
-  },
-  "34424435453534": {
-    "name": "misssssssssss",
-    "password": "5345435435435",
-    "profession": "gggg",
-    "id": "34424435453534"
-  },
-  "344244354535346666": {
-    "name": "dasdsadasdsa",
-    "password": "ytryrtytryrtyrt",
-    "profession": "5555555555555",
-    "id": "344244354535346666"
+  "article_ID_2xxxxxx": {
+    "title": "xxxx",
+    "publish_date": "2024-03-03",
+    "writer": {
+      "name": "shayna",
+      "email": "jshaynaohn.doe@example.com",
+      "mobile_phone": "123456789",
+      "home_phone": 987654321
+    },
+    "images": [
+      {
+        "thumb_url": "/path/to/image/bbb.jpg",
+        "id": "aaa",
+        "description": "Description of the image bbb"
+      }
+    ],
+    "id": "article_ID_2xxxxxx"
   }
 }
