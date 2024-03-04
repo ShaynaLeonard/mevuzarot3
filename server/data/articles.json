@@ -1,32 +1,38 @@
 {
-  "article_ID_1": {
-    "title": "Sample Article",
+  "fghmb66555jh": {
+    "title": "arti2ff",
     "publish_date": "2024-03-03",
     "writer": {
-      "name": "John Doe",
-      "email": "john.doe@example.com",
+      "name": "secetond tru",
+      "email": "setrecond.doe@example.com",
       "mobile_phone": "123456789",
       "home_phone": 987654321
     },
     "images": [],
-    "id": "article_ID_1"
+    "id": "fghmb66555jh"
   },
-  "article_ID_2xxxxxx": {
-    "title": "xxxx",
+  "fgh": {
+    "title": "arti2ff",
     "publish_date": "2024-03-03",
     "writer": {
-      "name": "shayna",
-      "email": "jshaynaohn.doe@example.com",
+      "name": "secetond tru",
+      "email": "setrecond.doe@example.com",
       "mobile_phone": "123456789",
       "home_phone": 987654321
     },
-    "images": [
-      {
-        "thumb_url": "/path/to/image/bbb.jpg",
-        "id": "aaa",
-        "description": "Description of the image bbb"
-      }
-    ],
-    "id": "article_ID_2xxxxxx"
+    "images": [],
+    "id": "fgh"
+  },
+  "f345678gh": {
+    "title": "arti2ff",
+    "publish_date": "2024-03-03",
+    "writer": {
+      "name": "secetond tru",
+      "email": "setrecond.doe@example.com",
+      "mobile_phone": "123456789",
+      "home_phone": 987654321
+    },
+    "images": [],
+    "id": "f345678gh"
   }
 }
