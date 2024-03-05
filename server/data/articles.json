@@ -1,7 +1,7 @@
 {
-  "fghmb66555jh": {
-    "title": "arti2ff",
-    "publish_date": "2024-03-03",
+  "ddd": {
+    "title": "bbb",
+    "publish_date": "2024-07-08",
     "writer": {
       "name": "secetond tru",
       "email": "setrecond.doe@example.com",
@@ -9,30 +9,7 @@
       "home_phone": 987654321
     },
     "images": [],
-    "id": "fghmb66555jh"
-  },
-  "fgh": {
-    "title": "arti2ff",
-    "publish_date": "2024-03-03",
-    "writer": {
-      "name": "secetond tru",
-      "email": "setrecond.doe@example.com",
-      "mobile_phone": "123456789",
-      "home_phone": 987654321
-    },
-    "images": [],
-    "id": "fgh"
-  },
-  "f345678gh": {
-    "title": "arti2ff",
-    "publish_date": "2024-03-03",
-    "writer": {
-      "name": "secetond tru",
-      "email": "setrecond.doe@example.com",
-      "mobile_phone": "123456789",
-      "home_phone": 987654321
-    },
-    "images": [],
-    "id": "f345678gh"
+    "id": "ddd",
+    "summary": "nnnn"
   }
 }

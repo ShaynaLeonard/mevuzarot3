@@ -92,8 +92,9 @@ const updateArticle = async (req,res) =>{
                 if(detailToUpdate.title){
                     data[articleId].title = detailToUpdate.title; 
                 }
-                if(detailToUpdate.dateOfPublished){
-                    data[articleId].dateOfPublished = detailToUpdate.dateOfPublished; 
+            
+                if (detailToUpdate.publish_date) {  // Updated property name here
+                    data[articleId].publish_date = detailToUpdate.publish_date;  // Updated property name here
                 }
                 if(detailToUpdate.summary){
                     data[articleId].summary = detailToUpdate.summary; 

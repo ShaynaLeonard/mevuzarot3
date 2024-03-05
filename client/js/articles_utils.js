@@ -1,39 +1,21 @@
 $(document).ready(function () {
-    // Fetch articles data
-    $.ajax({
-      url: '/articles', 
-      dataType: 'json',
-      success: function (articlesData) {
-        order = "ascending"
-        category = "dateOfPublication"
-        displayArticles(articlesData);
-      },
-      error: function (err) {
-        console.log('Error fetching articles data', err);
-      }
-    });
+  // Fetch articles data
+  $.ajax({
+    url: '/articles',
+    dataType: 'json',
+    success: function (articlesData) {
+      order = "ascending"
+      category = "dateOfPublication"
+      displayArticles(articlesData);
+    },
+    error: function (err) {
+      console.log('Error fetching articles data', err);
+    }
+  });
+});
 
 
-    // Save display changes button click event
-//   $("#saveDisplayChanges").click(function () {
-
-//     // Get selected order and category values
-//     var order = $('input[name="order"]:checked').val();
-//     var category = $('input[name="catergory"]:checked').val();
-//     console.log("order=", order)
-//     console.log("catergory=", category)
-
-    
-//     // displayArticles(order, category);
-
-
-//   });
- });
-
-
-
-
- // Function to display articles
+// Function to display articles
 function displayArticles(articlesData) {
   var articleList = $('#articleList');
 
@@ -56,132 +38,159 @@ function displayArticles(articlesData) {
   });
 
   // Add event listeners for the buttons
-articleList.on('click', '.deleteBtn', function() {
-  var articleId = $(this).data('article-id');
-  var articleDiv = $(this).closest('div'); // Find the parent div containing the article
+  articleList.on('click', '.deleteBtn', function () {
+    var articleId = $(this).data('article-id');
+    var articleDiv = $(this).closest('div'); // Find the parent div containing the article
 
-  // Confirm with the user before deleting the article
-  if (confirm("Are you sure you want to delete this article?")) {
-    // Make AJAX request to delete the article
+    // Confirm with the user before deleting the article
+    if (confirm("Are you sure you want to delete this article?")) {
+      // Make AJAX request to delete the article
+      $.ajax({
+        url: '/articles/' + articleId,
+        type: 'DELETE',
+        success: function (response) {
+          console.log(response); // Log the server response
+          // Remove the deleted article from the UI
+          articleDiv.remove();
+        },
+        error: function (xhr, status, error) {
+          console.error(xhr.responseText); // Log any errors
+          alert("An error occurred while deleting the article.");
+        }
+      });
+    }
+  });
+
+  articleList.on('click', '.editBtn', function () {
+    var articleId = $(this).data('article-id');
+
+    console.log("this is article id = ", articleId)
+
+    // var articleId = $(this).data('article-id');
+    openEditModal(articleId);
+  });
+
+
+  // Open edit modal function
+  function openEditModal(articleId) {
+    // Set the data-article-id attribute for later retrieval
+    $('#saveChangesBtn').data('article-id', articleId);
+
+    // Open the modal
+    $('#modal').show();
+  }
+
+
+  // Close modal function
+  function closeModal() {
+    $('#modal').hide();
+  }
+
+  // Save changes function
+  function saveChanges(articleId) {
+    // Get values from the modal
+    var updatedTitle = $('#editTitle').val();
+    var updatedPublishDate = $('#editPublishDate').val();
+    var updatedSummary = $('#editSummary').val();
+
+    // Create an object to store the fields that are not empty
+    var updatedData = {};
+
+    if (updatedTitle) {
+      updatedData.title = updatedTitle;
+    }
+
+    if (updatedPublishDate) {
+      // You may want to validate the date format here before adding it to the payload
+      updatedData.publish_date = updatedPublishDate;
+    }
+
+    
+
+    if (updatedSummary) {
+      updatedData.summary = updatedSummary;
+    }
+
+    // Make AJAX request to update the article
     $.ajax({
       url: '/articles/' + articleId,
-      type: 'DELETE',
-      success: function(response) {
-        console.log(response); // Log the server response
-        // Remove the deleted article from the UI
-        articleDiv.remove();
+      type: 'PUT',
+      contentType: 'application/json',
+      data: JSON.stringify(updatedData),
+      success: function (response) {
+        console.log(response);
+        
+        var articleDiv = $('#articleList').find(`[data-article-id="${articleId}"]`);
+      
+
+      //   $('#editTitle').val() ='';
+      // $('#editPublishDate').val('');
+      // $('#editSummary').val('');
+
+
+        reloadArticles();
+
+
+        closeModal();
       },
-      error: function(xhr, status, error) {
-        console.error(xhr.responseText); // Log any errors
-        alert("An error occurred while deleting the article.");
+      error: function (xhr, status, error) {
+        console.error(xhr.responseText);
+        alert("An error occurred while updating the article.");
       }
     });
   }
-});
 
-  // Add event listeners for the buttons
-articleList.on('click', '.editBtn', function() {
-  var articleId = $(this).data('article-id');
-  
-  // Open a modal window for editing
-  openEditModal(articleId);
-});
+  // Event listener for the save button in the modal
+  $('#saveChangesBtn').click(function () {
+    var articleId = $(this).data('article-id');
+    saveChanges(articleId);
+  });
 
-function openEditModal(articleId) {
-  // Example: Open a Bootstrap modal window for editing
-  // You can customize this modal according to your UI framework or design
-  
-  // Fetch article data to populate the form fields
+  // ...
+
+
+  // Event listener for closing the modal
+  $('#modalCloseBtn').click(function () {
+    closeModal();
+  });
+
+
+  // Function to fetch and display articles
+function reloadArticles() {
   $.ajax({
-    url: '/articles/' + articleId,
-    type: 'PUT',
-    success: function(articleData) {
-      // Populate form fields with article data
-      $('#editTitle').val(articleData.title);
-      $('#editPublishDate').val(articleData.publish_date);
-      $('#editSummary').val(articleData.summary);
-      
-      // Open the modal window
-      $('#editModal').modal('show');
+    url: '/articles',
+    dataType: 'json',
+    success: function (articlesData) {
+      // Clear the existing articles
+      $('#articleList').empty();
+
+      // Display the updated articles
+      displayArticles(articlesData);
+
+      // Close the modal after saving changes
+      closeModal();
     },
-    error: function(xhr, status, error) {
-      console.error(xhr.responseText); // Log any errors
-      alert("An error occurred while fetching article data for editing.");
+    error: function (err) {
+      console.log('Error fetching articles data', err);
     }
   });
 }
 
 
-  articleList.on('click', '.addPictureBtn', function() {
+  articleList.on('click', '.addPictureBtn', function () {
     var articleId = $(this).data('article-id');
     // Call a function to handle adding a picture to the article with ID 'articleId'
     // Example: addPictureToArticle(articleId);
   });
 
-  articleList.on('click', '.viewPicturesBtn', function() {
+  articleList.on('click', '.viewPicturesBtn', function () {
     var articleId = $(this).data('article-id');
     // Call a function to handle viewing pictures associated with the article with ID 'articleId'
     // Example: viewPicturesOfArticle(articleId);
   });
 }
 
-  
-  
-  // Function to display articles
-  // function displayArticles(articlesData) {
-  //   var articleList = $('#articleList');
-  
-  //   $.each(articlesData, function (articleId, article) {
-  //     var articleHtml = `
-  //       <div>
-  //         <h3>Article ID: ${article.id}</h3>
-  //         <p>Title: ${article.title}</p>
-  //         <p>Writer's Name: ${article.writer.name}</p>
-  //         <p>Publish Date: ${article.publish_date}</p>
-  //       </div>
-  //       <hr>
-  //     `;
-  
-  //     articleList.append(articleHtml);
-  //   });
-  // }
 
-  // function displayArticles(articlesData, order, category) {
-  //   var articleList = $('#articleList');
-  
-  //   // Convert articlesData to an array for sorting
-  //   var articlesArray = Object.values(articlesData);
-  
-  //   // Sort articles based on category and order
-  //   articlesArray.sort(function (a, b) {
-  //     if (category === 'title') {
-  //       // Sort by title
-  //       return order === 'ascending' ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title);
-  //     } else if (category === 'dateOfPublication') {
-  //       // Sort by date of publication
-  //       return order === 'ascending' ? new Date(a.publish_date) - new Date(b.publish_date) : new Date(b.publish_date) - new Date(a.publish_date);
-  //     }
-  //     // Default to no sorting
-  //     return 0;
-  //   });
-  
-  //   // Clear existing content in the articleList
-  //   articleList.empty();
-  
-  //   // Display sorted articles
-  //   $.each(articlesArray, function (index, article) {
-  //     var articleHtml = `
-  //       <div>
-  //         <h3>Article ID: ${article.id}</h3>
-  //         <p>Title: ${article.title}</p>
-  //         <p>Writer's Name: ${article.writer.name}</p>
-  //         <p>Publish Date: ${article.publish_date}</p>
-  //       </div>
-  //       <hr>
-  //     `;
-  
-  //     articleList.append(articleHtml);
-  //   });
-  // }
-  
-  
+
+
+

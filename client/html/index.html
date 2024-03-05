@@ -52,6 +52,25 @@
     <!-- Articles will be displayed here -->
   </div>
 
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close" id = "modalCloseBtn">&times;</span>
+      <h2>Edit Article</h2>
+      <form id="editForm">
+        <label for="editTitle">Title:</label>
+        <input type="text" id="editTitle" name="editTitle">
+        
+        <label for="editPublishDate">Publish Date:</label>
+        <input type="text" id="editPublishDate" name="editPublishDate" hint = "hrlll">
+        
+        <label for="editSummary">Summary:</label>
+        <textarea id="editSummary" name="editSummary"></textarea>
+        
+        <button id="saveChangesBtn" type="button">Save Changes</button>
+      </form>
+    </div>
+  </div>
+
   <script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="/js/articles_utils.js"></script>
 </body>
