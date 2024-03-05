@@ -1,12 +1,57 @@
 const fs = require('fs');
 const yup = require("yup");
 const express = require('express');
+const moment = require('moment');
 const app = express();
 app.use(express.json());
+
 
 // variables
 const dataPath = './server/data/articles.json';
 
+
+function isValidDateFormat(dateString) {
+    var dateFormat = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateFormat.test(dateString)) {
+        return false; // Date format is incorrect
+    }
+
+    // Extract year, month, and day from the date string
+    var parts = dateString.split('-');
+    var year = parseInt(parts[0]);
+    var month = parseInt(parts[1]);
+    var day = parseInt(parts[2]);
+
+    // Get the current date
+    var currentDate = new Date();
+    var currentYear = currentDate.getFullYear();
+    var currentMonth = currentDate.getMonth() + 1; // January is 0, so add 1
+    var currentDay = currentDate.getDate();
+
+    // Check if the year is within the valid range (0 to current year)
+    if (year < 0 || year > currentYear) {
+        return false;
+    }
+
+    // Check if the month is within the valid range (1 to 12)
+    if (month < 1 || month > 12) {
+        return false;
+    }
+
+    // Check if the day is within the valid range for the given month and year
+    var daysInMonth = new Date(year, month, 0).getDate();
+    if (day < 1 || day > daysInMonth) {
+        return false;
+    }
+
+    // Check if the date is before the current date
+    if (year == currentYear && month >= currentMonth && day >= currentDay) {
+        return false;
+    }
+
+    // Date format and all tests passed, return true
+    return true;
+}
 // helper methods
 const readFile = (callback, returnJson = false, filePath = dataPath, encoding = 'utf8') => {
     fs.readFile(filePath, encoding, (err, data) => {
@@ -31,7 +76,17 @@ const writeFile = (fileData, callback, filePath = dataPath, encoding = 'utf8') =
 //CREATE
 const articleSchema = yup.object({
     title: yup.string().required(),
-    publish_date: yup.date().required(),
+    publish_date: yup.string().test('is-valid-date', 'Invalid date format', function (value) {
+        // Check if the value is a valid date
+        return moment(value, moment.ISO_8601, true).isValid();
+    })
+        .test('is-past-date', 'Publish date must not be in the future', function (value) {
+            // Check if the value is not in the future
+            return moment(value).isSameOrBefore(moment(), 'day');
+        }).test('is-valid-format', 'Date must be in YYYY-MM-DD format', function (value) {
+            // Check if the value is in the correct format (YYYY-MM-DD)
+            return /^\d{4}-\d{2}-\d{2}$/.test(value);
+        }).required(),
     summary: yup.string().required(),
     writer: yup.object({
         name: yup.string().required(),
@@ -70,34 +125,40 @@ const CreateArticle = async (req, res) => {
         }, true);
     } catch (error) {
         console.error(error);
-        res.status(400).json({ error: error.errors }); // Return validation errors in the response
+        res.sendStatus(400);
     }
 };
 
 //UPDATE 
 const articleUpdateSchema = yup.object({
     title: yup.string(),
-    publish_date: yup.date(),
+    publish_date: yup.string(),
     summary: yup.string(),
 });
 
-const updateArticle = async (req,res) =>{
+
+const updateArticle = async (req, res) => {
     const articleId = req.params["id"];
-    const detailToUpdate = req.body; 
+    const detailToUpdate = req.body;
     await articleUpdateSchema.validate(detailToUpdate);
 
-    try{
+    try {
         readFile(data => {
-            if (data[articleId]){
-                if(detailToUpdate.title){
-                    data[articleId].title = detailToUpdate.title; 
+            if (data[articleId]) {
+                if (detailToUpdate.title) {
+                    data[articleId].title = detailToUpdate.title;
                 }
-            
-                if (detailToUpdate.publish_date) {  // Updated property name here
+
+                if (detailToUpdate.publish_date) {
+                    if (!isValidDateFormat(dateString)) {
+                        console.error("invalid date!")
+                        res.sendStatus(400);
+
+                    }
                     data[articleId].publish_date = detailToUpdate.publish_date;  // Updated property name here
                 }
-                if(detailToUpdate.summary){
-                    data[articleId].summary = detailToUpdate.summary; 
+                if (detailToUpdate.summary) {
+                    data[articleId].summary = detailToUpdate.summary;
                 }
             }
             writeFile(JSON.stringify(data, null, 2), () => {
@@ -106,19 +167,19 @@ const updateArticle = async (req,res) =>{
                 res.status(200).send(`article id:${articleId} updated`);
             });
 
-        }, true); 
+        }, true);
     } catch (error) {
         console.error(error);
         res.sendStatus(400);
     }
-}; 
+};
 
 const AddImagesToArticle = async (req, res) => {
     const articleId = req.params["id"];
 
-    const thumb_url = req.body["thumb_url"]; 
-    const id = req.body["id"]; 
-    const description = req.body["description"]; 
+    const thumb_url = req.body["thumb_url"];
+    const id = req.body["id"];
+    const description = req.body["description"];
 
 
     try {
@@ -135,7 +196,7 @@ const AddImagesToArticle = async (req, res) => {
                     // Add the new image details to the article's images array
                     article.images.push({
                         thumb_url: thumb_url,
-                        id: id, 
+                        id: id,
                         description: description,
                     });
 
@@ -170,7 +231,7 @@ const getArticles = async (req, res) => {
         else
             res.send(!data ? JSON.parse("{}") : JSON.parse(data));
     });
-}; 
+};
 
 const getArticle = (req, res) => {
     const articleId = req.params.id;
@@ -203,7 +264,7 @@ const deleteArticle = (req, res) => {
 
 const deleteImageFromArticle = async (req, res) => {
     const articleId = req.params["id"];
-    const imageId = req.params["imageId"]; 
+    const imageId = req.params["imageId"];
     try {
         // Read data from file
         readFile(data => {
@@ -242,12 +303,12 @@ const deleteImageFromArticle = async (req, res) => {
 module.exports = {
     CreateArticle,
     articleSchema,
-    articleUpdateSchema, 
-    updateArticle, 
-    getArticles, 
-    getArticle, 
-    deleteArticle, 
-    deleteImageFromArticle, 
+    articleUpdateSchema,
+    updateArticle,
+    getArticles,
+    getArticle,
+    deleteArticle,
+    deleteImageFromArticle,
     AddImagesToArticle
 
 };

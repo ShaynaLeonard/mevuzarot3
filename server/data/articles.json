@@ -12,7 +12,7 @@
     "id": "BArticle"
   },
   "AArticle": {
-    "title": "B",
+    "title": "helgeogebraoo",
     "publish_date": "2023-05-09",
     "writer": {
       "name": "yehuda",
@@ -46,53 +46,5 @@
     },
     "images": [],
     "id": "CArticle_hh"
-  },
-  "CArticle_hh jn": {
-    "title": "B",
-    "publish_date": "2023-05-09",
-    "writer": {
-      "name": "yehuda",
-      "email": "yehuda@gmail.com",
-      "mobile_phone": "058456",
-      "home_phone": 10
-    },
-    "images": [],
-    "id": "CArticle_hh jn"
-  },
-  "Cticle_h jn": {
-    "title": "B",
-    "publish_date": "2023-05-09",
-    "writer": {
-      "name": "yehuda",
-      "email": "yehuda@gmail.com",
-      "mobile_phone": "058456",
-      "home_phone": 10
-    },
-    "images": [],
-    "id": "Cticle_h jn"
-  },
-  "Cticlejn": {
-    "title": "B",
-    "publish_date": "202",
-    "writer": {
-      "name": "yehuda",
-      "email": "yehuda@gmail.com",
-      "mobile_phone": "058456",
-      "home_phone": 10
-    },
-    "images": [],
-    "id": "Cticlejn"
-  },
-  "Cticle_jn": {
-    "title": "B",
-    "publish_date": "202",
-    "writer": {
-      "name": "yehuda",
-      "email": "yehuda@gmail.com",
-      "mobile_phone": "058456",
-      "home_phone": 10
-    },
-    "images": [],
-    "id": "Cticle_jn"
   }
 }
