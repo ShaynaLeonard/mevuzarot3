@@ -1,21 +1,49 @@
-$(document).ready(function () {
-  // Fetch articles data
-  $.ajax({
-    url: '/articles',
-    dataType: 'json',
-    success: function (articlesData) {
-      order = "ascending"
-      category = "dateOfPublication"
-      displayArticles(articlesData);
-    },
-    error: function (err) {
-      console.log('Error fetching articles data', err);
-    }
-  });
-});
 
+var order = "descending"; // Default value
+var category = "dateOfPublication"; // Default value
+function isValidDateFormat(dateString) {
+  var dateFormat = /^\d{4}-\d{2}-\d{2}$/;
+  if (!dateFormat.test(dateString)) {
+    return false; // Date format is incorrect
+  }
 
-// Function to display articles
+  // Extract year, month, and day from the date string
+  var parts = dateString.split('-');
+  var year = parseInt(parts[0]);
+  var month = parseInt(parts[1]);
+  var day = parseInt(parts[2]);
+
+  // Get the current date
+  var currentDate = new Date();
+  var currentYear = currentDate.getFullYear();
+  var currentMonth = currentDate.getMonth() + 1; // January is 0, so add 1
+  var currentDay = currentDate.getDate();
+
+  // Check if the year is within the valid range (0 to current year)
+  if (year < 0 || year > currentYear) {
+    return false;
+  }
+
+  // Check if the month is within the valid range (1 to 12)
+  if (month < 1 || month > 12) {
+    return false;
+  }
+
+  // Check if the day is within the valid range for the given month and year
+  var daysInMonth = new Date(year, month, 0).getDate();
+  if (day < 1 || day > daysInMonth) {
+    return false;
+  }
+
+  // Check if the date is before the current date
+  if (year == currentYear && month >= currentMonth && day >= currentDay) {
+    return false;
+  }
+
+  // Date format and all tests passed, return true
+  return true;
+}
+
 function displayArticles(articlesData) {
   var articleList = $('#articleList');
 
@@ -30,8 +58,9 @@ function displayArticles(articlesData) {
         <button class="editBtn" data-article-id="${article.id}">Edit</button>
         <button class="addPictureBtn" data-article-id="${article.id}">Add Picture</button>
         <button class="viewPicturesBtn" data-article-id="${article.id}">View Pictures</button>
+        <hr>
       </div>
-      <hr>
+      
     `;
 
     articleList.append(articleHtml);
@@ -83,6 +112,9 @@ function displayArticles(articlesData) {
 
   // Close modal function
   function closeModal() {
+    $('#editTitle').val('');
+    $('#editPublishDate').val('');
+    $('#editSummary').val('');
     $('#modal').hide();
   }
 
@@ -101,17 +133,21 @@ function displayArticles(articlesData) {
     }
 
     if (updatedPublishDate) {
-      // You may want to validate the date format here before adding it to the payload
+
+      if (!isValidDateFormat(updatedPublishDate)) {
+        alert("Invalid date format. Please use the format YYYY-MM-DD, in numbers! and please dont be nudnik");
+        $('#editPublishDate').val('');
+        return;
+      }
       updatedData.publish_date = updatedPublishDate;
     }
 
-    
+
 
     if (updatedSummary) {
       updatedData.summary = updatedSummary;
     }
 
-    // Make AJAX request to update the article
     $.ajax({
       url: '/articles/' + articleId,
       type: 'PUT',
@@ -119,16 +155,11 @@ function displayArticles(articlesData) {
       data: JSON.stringify(updatedData),
       success: function (response) {
         console.log(response);
-        
+
         var articleDiv = $('#articleList').find(`[data-article-id="${articleId}"]`);
-      
-
-      //   $('#editTitle').val() ='';
-      // $('#editPublishDate').val('');
-      // $('#editSummary').val('');
 
 
-        reloadArticles();
+        reloadArticles(order, category);
 
 
         closeModal();
@@ -144,6 +175,7 @@ function displayArticles(articlesData) {
   $('#saveChangesBtn').click(function () {
     var articleId = $(this).data('article-id');
     saveChanges(articleId);
+
   });
 
   // ...
@@ -155,26 +187,7 @@ function displayArticles(articlesData) {
   });
 
 
-  // Function to fetch and display articles
-function reloadArticles() {
-  $.ajax({
-    url: '/articles',
-    dataType: 'json',
-    success: function (articlesData) {
-      // Clear the existing articles
-      $('#articleList').empty();
 
-      // Display the updated articles
-      displayArticles(articlesData);
-
-      // Close the modal after saving changes
-      closeModal();
-    },
-    error: function (err) {
-      console.log('Error fetching articles data', err);
-    }
-  });
-}
 
 
   articleList.on('click', '.addPictureBtn', function () {
@@ -189,6 +202,79 @@ function reloadArticles() {
     // Example: viewPicturesOfArticle(articleId);
   });
 }
+
+// Function to fetch and display articles with sorting parameters
+function reloadArticles(order, category) {
+  $.ajax({
+    url: '/articles',
+    dataType: 'json',
+    data: {
+      order: order,
+      category: category
+    },
+    success: function (articlesData) {
+      if (typeof articlesData !== 'object' || Array.isArray(articlesData)) {
+        console.error('Error: articlesData is not an object');
+        return;
+      }
+
+      // Convert the object into an array of objects
+      var articlesArray = Object.values(articlesData);
+
+      // Sort articles based on the selected category and order
+      articlesArray.sort(function (a, b) {
+        if (order === 'ascending') {
+          if (category === 'title') {
+            return a.title.localeCompare(b.title);
+          } else if (category === 'dateOfPublication') {
+            return new Date(a.publish_date) - new Date(b.publish_date);
+          }
+        } else if (order === 'descending') {
+          if (category === 'title') {
+            return b.title.localeCompare(a.title);
+          } else if (category === 'dateOfPublication') {
+            return new Date(b.publish_date) - new Date(a.publish_date);
+          }
+        }
+      });
+
+      // Clear the existing articles
+      $('#articleList').empty();
+
+      // Display the sorted articles
+      displayArticles(articlesArray);
+    },
+    error: function (xhr, status, error) {
+      console.log('Error fetching articles data', error);
+    }
+  });
+}
+
+$(document).ready(function () {
+
+
+  // Trigger reloadArticles with default values only on page load
+  reloadArticles(order, category);
+
+  // Event listener for order change 
+  $('input[name="catergory"]').change(function () {
+    category = $(this).val();
+  });
+
+  $('input[name="order"]').change(function () {
+    order = $(this).val();
+  });
+
+
+
+  // Event listener for Save Changes button click
+  $('#saveDisplayChanges').click(function () {
+    console.log("order:", order, "category", category)
+    reloadArticles(order, category);
+  });
+});
+
+
 
 
 
