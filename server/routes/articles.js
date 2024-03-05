@@ -39,7 +39,8 @@ const articleSchema = yup.object({
         mobile_phone: yup.string().required(),
         home_phone: yup.number().required(),
     }),
-    ID: yup.string().required(),
+    ID: yup.string().matches(/^[a-zA-Z0-9_]+$/, 'ID must contain only letters and numbers').required(),
+
 });
 
 const CreateArticle = async (req, res) => {
@@ -47,7 +48,7 @@ const CreateArticle = async (req, res) => {
 
     try {
         // Validate ArticleDetails against schema
-        await articleSchema.validate(ArticleDetails);
+        await articleSchema.validate(ArticleDetails, { abortEarly: false }); // Add abortEarly option to collect all validation errors
 
         // Read data from file
         readFile(data => {
@@ -69,8 +70,7 @@ const CreateArticle = async (req, res) => {
         }, true);
     } catch (error) {
         console.error(error);
-
-        res.sendStatus(400);
+        res.status(400).json({ error: error.errors }); // Return validation errors in the response
     }
 };
 

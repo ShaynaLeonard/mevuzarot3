@@ -135,7 +135,7 @@ function displayArticles(articlesData) {
     if (updatedPublishDate) {
 
       if (!isValidDateFormat(updatedPublishDate)) {
-        alert("Invalid date format. Please use the format YYYY-MM-DD, in numbers! and please dont be nudnik");
+        alert("Invalid date format. Please use the format YYYY-MM-DD (in numbers), dont put future date or incorrect date!");
         $('#editPublishDate').val('');
         return;
       }
