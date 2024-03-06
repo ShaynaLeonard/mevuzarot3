@@ -1,62 +1,38 @@
 {
-  "BArticle": {
-    "title": "A",
+  "aID": {
+    "title": "title",
     "publish_date": "2021-01-01",
     "writer": {
-      "name": "yehuda",
-      "email": "yehuda@gmail.com",
-      "mobile_phone": "058456",
-      "home_phone": 10
+      "name": "a",
+      "email": "a@gmail.com",
+      "mobile_phone": "a053",
+      "home_phone": "a02"
     },
     "images": [],
-    "id": "BArticle"
+    "id": "aID"
   },
-  "AArticle": {
-    "title": "helgeogebraoo",
-    "publish_date": "2024-01-01",
+  "bID": {
+    "title": "title",
+    "publish_date": "2024-03-05",
     "writer": {
-      "name": "yehuda",
-      "email": "yehuda@gmail.com",
-      "mobile_phone": "058456",
-      "home_phone": 10
+      "name": "c",
+      "email": "c@gmail.com",
+      "mobile_phone": "c053",
+      "home_phone": "c02"
     },
     "images": [],
-    "id": "AArticle"
+    "id": "bID"
   },
-  "CArticle": {
-    "title": "B",
-    "publish_date": "2023-05-09",
+  "v": {
+    "title": "title",
+    "publish_date": "2024-03-05",
     "writer": {
-      "name": "yehuda",
-      "email": "yehuda@gmail.com",
-      "mobile_phone": "058456",
-      "home_phone": 10
+      "name": "v",
+      "email": "shayna5762@gmail.com",
+      "mobile_phone": "v",
+      "home_phone": "v"
     },
     "images": [],
-    "id": "CArticle"
-  },
-  "CArticle_hh": {
-    "title": "B",
-    "publish_date": "2023-05-09",
-    "writer": {
-      "name": "yehuda",
-      "email": "yehuda@gmail.com",
-      "mobile_phone": "058456",
-      "home_phone": 10
-    },
-    "images": [],
-    "id": "CArticle_hh"
-  },
-  "aaa": {
-    "title": "A",
-    "publish_date": "2021-01-01",
-    "writer": {
-      "name": "yehuda",
-      "email": "yehuda@gmail.com",
-      "mobile_phone": "058456",
-      "home_phone": 10
-    },
-    "images": [],
-    "id": "aaa"
+    "id": "v"
   }
 }

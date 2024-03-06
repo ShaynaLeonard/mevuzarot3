@@ -92,11 +92,42 @@ const articleSchema = yup.object({
         name: yup.string().required(),
         email: yup.string().email().required(),
         mobile_phone: yup.string().required(),
-        home_phone: yup.number().required(),
+        home_phone: yup.string().required(),
     }),
     ID: yup.string().matches(/^[a-zA-Z0-9_]+$/, 'ID must contain only letters and numbers').required(),
 
 });
+
+// const CreateArticle = async (req, res) => {
+//     const ArticleDetails = req.body; // Extract payload from request body
+
+//     try {
+//         // Validate ArticleDetails against schema
+//         await articleSchema.validate(ArticleDetails, { abortEarly: false }); // Add abortEarly option to collect all validation errors
+
+//         // Read data from file
+//         readFile(data => {
+//             // Add the new article
+//             data[ArticleDetails.ID] = {
+//                 title: ArticleDetails.title,
+//                 publish_date: ArticleDetails.publish_date,
+//                 writer: ArticleDetails.writer,
+//                 images: [], // Empty array for images
+//                 id: ArticleDetails.ID,
+//             };
+
+//             // Write updated data to file
+//             writeFile(JSON.stringify(data, null, 2), () => {
+//                 console.log('New article added successfully');
+//                 // Call the callback function with a success status
+//                 res.status(200).send(`article id:${ArticleDetails.ID} created`);
+//             });
+//         }, true);
+//     } catch (error) {
+//         console.error(error);
+//         res.sendStatus(400);
+//     }
+// };
 
 const CreateArticle = async (req, res) => {
     const ArticleDetails = req.body; // Extract payload from request body
@@ -124,10 +155,18 @@ const CreateArticle = async (req, res) => {
             });
         }, true);
     } catch (error) {
-        console.error(error);
-        res.sendStatus(400);
+        // If validation fails, send detailed error messages
+        const validationErrors = {};
+        if (error.inner) {
+            error.inner.forEach(err => {
+                validationErrors[err.path] = err.message;
+            });
+        }
+
+        res.status(400).json({ errors: validationErrors });
     }
 };
+
 
 //UPDATE 
 const articleUpdateSchema = yup.object({
@@ -139,7 +178,6 @@ const articleUpdateSchema = yup.object({
 const updateArticle = async (req, res) => {
     const articleId = req.params["id"];
     const detailToUpdate = req.body;
-   // await articleUpdateSchema.validate(detailToUpdate);
 
     await articleUpdateSchema.validate(detailToUpdate, { abortEarly: false });
 
@@ -234,8 +272,6 @@ const AddImagesToArticle = async (req, res) => {
         res.status(400).send(`Missing required fields: ${missingFields}`);
     }
 };
-
-
 
 //READ
 const getArticles = async (req, res) => {

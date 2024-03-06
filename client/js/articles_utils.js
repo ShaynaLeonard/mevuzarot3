@@ -178,16 +178,10 @@ function displayArticles(articlesData) {
 
   });
 
-  // ...
-
-
   // Event listener for closing the modal
   $('#modalCloseBtn').click(function () {
     closeModal();
   });
-
-
-
 
 
   articleList.on('click', '.addPictureBtn', function () {
@@ -273,6 +267,119 @@ $(document).ready(function () {
     reloadArticles(order, category);
   });
 });
+
+// Function to open the add article form
+function openAddArticleForm() {
+  // Clear form inputs
+  $('#addArticleForm input, #addArticleForm textarea').val('');
+
+  //change 
+  $('.error-message').remove();
+
+  // Show the add article form
+  $('#addArticleForm').show();
+}
+
+// Event listener for "Add Article" buttons
+$('#addArticleAbove, #addArticleBelow').click(function () {
+  openAddArticleForm();
+});
+
+// Event listener for closing the add article form
+$('#formCloseBtn').click(function () {
+  $('#addArticleForm').hide();
+});
+
+// Event listener for saving a new article
+$('#saveArticleBtn').click(function () {
+
+  //change 
+  $('.error-message').remove();
+
+  var requiredFields = ['title', 'publishDate', 'summary', 'writerName', 'writerEmail', 'mobilePhone', 'homePhone', 'articleId'];
+  var isValid = true;
+
+  requiredFields.forEach(function (fieldName) {
+    var fieldValue = $('#' + fieldName).val();
+
+    if (!fieldValue) {
+      // Display error message above the input field
+      console.log("field value", fieldValue)
+      $('<div class="error-message">*required</div>').insertBefore('#' + fieldName);
+      isValid = false;
+    }
+  });
+
+  if (!isValid) {
+    // If there are validation errors, stop processing the form
+    return;
+  }
+
+
+  // Get values from the form
+  var newArticle = {
+    title: $('#title').val(),
+    publish_date: $('#publishDate').val(),
+    summary: $('#summary').val(),
+    writer: {
+      name: $('#writerName').val(),
+      email: $('#writerEmail').val(),
+      mobile_phone: $('#mobilePhone').val(),
+      home_phone: $('#homePhone').val(),
+    },
+    ID: $('#articleId').val(),
+  };
+
+  console.log("title", title)
+
+  // // Make an AJAX request to create a new article
+  // $.ajax({
+  //   url: '/articles',
+  //   type: 'POST',
+  //   contentType: 'application/json',
+  //   data: JSON.stringify(newArticle),
+  //   success: function (response) {
+  //     console.log(response);
+  //     // Reload articles to display the newly added article
+  //     reloadArticles(order, category);
+  //     // Close the add article form
+  //     $('#addArticleForm').hide();
+  //   },
+  //   error: function (xhr, status, error) {
+  //     console.error(xhr.responseText);
+  //     alert("An error occurred while adding the article.");
+  //   }
+  // });
+
+  // Make an AJAX request to create a new article
+$.ajax({
+  url: '/articles',
+  type: 'POST',
+  contentType: 'application/json',
+  data: JSON.stringify(newArticle),
+  success: function (response) {
+      console.log(response);
+      // Reload articles to display the newly added article
+      reloadArticles(order, category);
+      // Close the add article form
+      $('#addArticleForm').hide();
+  },
+  error: function (xhr, status, error) {
+      if (xhr.responseJSON && xhr.responseJSON.errors) {
+          // Display specific validation errors
+          Object.entries(xhr.responseJSON.errors).forEach(([field, message]) => {
+              alert(`${field}: ${message}`);
+          });
+      } else {
+          // Display a generic error message
+          console.error(xhr.responseText);
+          alert("An error occurred while adding the article.");
+      }
+  }
+});
+
+});
+
 
 
 
