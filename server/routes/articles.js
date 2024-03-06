@@ -132,15 +132,16 @@ const CreateArticle = async (req, res) => {
 //UPDATE 
 const articleUpdateSchema = yup.object({
     title: yup.string(),
-    publish_date: yup.string(),
+    publish_date: yup.string(), 
     summary: yup.string(),
 });
-
 
 const updateArticle = async (req, res) => {
     const articleId = req.params["id"];
     const detailToUpdate = req.body;
-    await articleUpdateSchema.validate(detailToUpdate);
+   // await articleUpdateSchema.validate(detailToUpdate);
+
+    await articleUpdateSchema.validate(detailToUpdate, { abortEarly: false });
 
     try {
         readFile(data => {
@@ -150,7 +151,7 @@ const updateArticle = async (req, res) => {
                 }
 
                 if (detailToUpdate.publish_date) {
-                    if (!isValidDateFormat(dateString)) {
+                    if (!isValidDateFormat(detailToUpdate.publish_date)) {
                         console.error("invalid date!")
                         res.sendStatus(400);
 
@@ -174,15 +175,28 @@ const updateArticle = async (req, res) => {
     }
 };
 
+
+const addImagesToArticleSchema = yup.object({
+    id: yup.string().required(),
+    thumb_url: yup.string().required(), 
+    description: yup.string().required(),
+});
+
 const AddImagesToArticle = async (req, res) => {
     const articleId = req.params["id"];
 
-    const thumb_url = req.body["thumb_url"];
-    const id = req.body["id"];
-    const description = req.body["description"];
-
+    console.log("article id", articleId)
+    const imageDetails = req.body;
 
     try {
+        // Validate the request body
+        await addImagesToArticleSchema.validate(imageDetails, { abortEarly: false });
+
+        // If validation passes, proceed with the rest of the logic
+        const thumb_url = imageDetails["thumb_url"];
+        const id = imageDetails["id"];
+        const description = imageDetails["description"];
+
         // Read data from file
         readFile(data => {
             // Check if the article exists
@@ -214,11 +228,13 @@ const AddImagesToArticle = async (req, res) => {
                 res.status(404).send(`Article ${articleId} not found`);
             }
         }, true);
-    } catch (error) {
-        console.error(error);
-        res.sendStatus(400);
+    } catch (validationError) {
+        // Handle validation error
+        const missingFields = validationError.errors.join(', ');
+        res.status(400).send(`Missing required fields: ${missingFields}`);
     }
 };
+
 
 
 //READ
@@ -305,10 +321,12 @@ module.exports = {
     articleSchema,
     articleUpdateSchema,
     updateArticle,
+    
     getArticles,
     getArticle,
     deleteArticle,
     deleteImageFromArticle,
-    AddImagesToArticle
+    AddImagesToArticle, 
+    addImagesToArticleSchema
 
 };
