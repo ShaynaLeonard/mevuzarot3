@@ -9,6 +9,10 @@ app.use(express.json());
 // variables
 const dataPath = './server/data/articles.json';
 
+// name:  isValidDateFormat
+// description : checks that the string received for a date is correct and not in the future 
+// parameters: dateString 
+// return parameters: true - if date passed the validation and false other 
 
 function isValidDateFormat(dateString) {
     var dateFormat = /^\d{4}-\d{2}-\d{2}$/;
@@ -52,7 +56,12 @@ function isValidDateFormat(dateString) {
     // Date format and all tests passed, return true
     return true;
 }
-// helper methods
+
+// name:  readFile
+// description : reads the json file 
+// parameters: callback, returnJson, filePath, encoding
+// return parameters:e  N/A 
+
 const readFile = (callback, returnJson = false, filePath = dataPath, encoding = 'utf8') => {
     fs.readFile(filePath, encoding, (err, data) => {
         if (err) {
@@ -63,6 +72,10 @@ const readFile = (callback, returnJson = false, filePath = dataPath, encoding = 
     });
 };
 
+// name:  writeFile
+// description : writes in the json file 
+// parameters: fileData, callback, filePath, encoding
+// return parameters: N/A 
 const writeFile = (fileData, callback, filePath = dataPath, encoding = 'utf8') => {
 
     fs.writeFile(filePath, fileData, encoding, (err) => {
@@ -73,7 +86,7 @@ const writeFile = (fileData, callback, filePath = dataPath, encoding = 'utf8') =
         callback();
     });
 };
-//CREATE
+
 const articleSchema = yup.object({
     title: yup.string().required(),
     publish_date: yup.string().test('is-valid-date', 'Invalid date format', function (value) {
@@ -98,40 +111,15 @@ const articleSchema = yup.object({
 
 });
 
-// const CreateArticle = async (req, res) => {
-//     const ArticleDetails = req.body; // Extract payload from request body
 
-//     try {
-//         // Validate ArticleDetails against schema
-//         await articleSchema.validate(ArticleDetails, { abortEarly: false }); // Add abortEarly option to collect all validation errors
-
-//         // Read data from file
-//         readFile(data => {
-//             // Add the new article
-//             data[ArticleDetails.ID] = {
-//                 title: ArticleDetails.title,
-//                 publish_date: ArticleDetails.publish_date,
-//                 writer: ArticleDetails.writer,
-//                 images: [], // Empty array for images
-//                 id: ArticleDetails.ID,
-//             };
-
-//             // Write updated data to file
-//             writeFile(JSON.stringify(data, null, 2), () => {
-//                 console.log('New article added successfully');
-//                 // Call the callback function with a success status
-//                 res.status(200).send(`article id:${ArticleDetails.ID} created`);
-//             });
-//         }, true);
-//     } catch (error) {
-//         console.error(error);
-//         res.sendStatus(400);
-//     }
-// };
-
+// name:  CreateArticle
+// description : receives the AricleDetails in the request, validates them with the yup schema, sends alerts to the 
+// user if needed and create the article 
+// parameters: recieved req containing the ArticleDetails 
+// return parameters: 200 if success and 400 if there were validation errors 
 const CreateArticle = async (req, res) => {
     const ArticleDetails = req.body; // Extract payload from request body
-
+    console.log("ArticleDetails", ArticleDetails.title)
     try {
         // Validate ArticleDetails against schema
         await articleSchema.validate(ArticleDetails, { abortEarly: false }); // Add abortEarly option to collect all validation errors
@@ -167,13 +155,18 @@ const CreateArticle = async (req, res) => {
     }
 };
 
-
 //UPDATE 
 const articleUpdateSchema = yup.object({
     title: yup.string(),
     publish_date: yup.string(), 
     summary: yup.string(),
 });
+
+// name:  updateArticle
+// description :receives the article id from the parameters sent and detailToUpdate in the request,
+// validates the articledetails with the yup schema, sends alerts to the user if needed and updates the article 
+// parameters: receives the article id from the parameters sent and detailToUpdate in the request
+// return parameters: 200 if success and 400 if there were validation errors 
 
 const updateArticle = async (req, res) => {
     const articleId = req.params["id"];
@@ -190,22 +183,25 @@ const updateArticle = async (req, res) => {
 
                 if (detailToUpdate.publish_date) {
                     if (!isValidDateFormat(detailToUpdate.publish_date)) {
-                        console.error("invalid date!")
+                        console.error("Invalid date!");
                         res.sendStatus(400);
-
+                        return;
                     }
-                    data[articleId].publish_date = detailToUpdate.publish_date;  // Updated property name here
+                    data[articleId].publish_date = detailToUpdate.publish_date;
                 }
+
                 if (detailToUpdate.summary) {
                     data[articleId].summary = detailToUpdate.summary;
                 }
-            }
-            writeFile(JSON.stringify(data, null, 2), () => {
-                console.log('Updated article successfully');
-                // Call the callback function with a success status
-                res.status(200).send(`article id:${articleId} updated`);
-            });
 
+                writeFile(JSON.stringify(data, null, 2), () => {
+                    console.log('Updated article successfully');
+                    res.status(200).send(`Article id:${articleId} updated`);
+                });
+            } else {
+                console.error(`Article with id:${articleId} not found`);
+                res.status(400).send(`Article with id:${articleId} not found`);
+            }
         }, true);
     } catch (error) {
         console.error(error);
@@ -213,13 +209,17 @@ const updateArticle = async (req, res) => {
     }
 };
 
-
 const addImagesToArticleSchema = yup.object({
     id: yup.string().required(),
     thumb_url: yup.string().required(), 
     description: yup.string().required(),
 });
 
+// name:  AddImagesToArticle
+// description :receives the article id from the parameters sent and imageDetails for the req 
+// validates the imageDetails with the yup schema, sends alerts to the user if needed and adds the images  
+// parameters: receives the article id from the parameters sent and imageDetails for the req 
+// return parameters: 200 if success and 400 if there were validation errors 
 const AddImagesToArticle = async (req, res) => {
     const articleId = req.params["id"];
 
@@ -273,6 +273,10 @@ const AddImagesToArticle = async (req, res) => {
     }
 };
 
+// name:  getArticles
+// description : 
+// parameters: 
+// return parameters: status 500 if there is an error 
 //READ
 const getArticles = async (req, res) => {
     fs.readFile(dataPath, 'utf8', (err, data) => {

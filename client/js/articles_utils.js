@@ -44,6 +44,10 @@ function isValidDateFormat(dateString) {
   return true;
 }
 
+// name:  displayArticles
+// description : display the articles, and their buttons, on the html 
+// parameters: articleData - the list of articles from the json file of articles 
+// return parameters: N/A  
 function displayArticles(articlesData) {
   var articleList = $('#articleList');
 
@@ -66,6 +70,10 @@ function displayArticles(articlesData) {
     articleList.append(articleHtml);
   });
 
+// name:  onclick listener for deleteBtn button 
+// description : when the button is clicled the article is deleted from the json file and removed from the html display 
+// parameters: none sent to the function (receives the id and the div of te article from the html)
+// return parameters: N/A 
   // Add event listeners for the buttons
   articleList.on('click', '.deleteBtn', function () {
     var articleId = $(this).data('article-id');
@@ -90,6 +98,12 @@ function displayArticles(articlesData) {
     }
   });
 
+
+  
+// name:  onclick listener for editBtn button  
+// description : when clicked a modal is opened so that you can edit specific details of an article. Once the save button is clicked the article is updated.  
+// parameters: recieves the article id from the html 
+// return parameters: N/A 
   articleList.on('click', '.editBtn', function () {
     var articleId = $(this).data('article-id');
 
@@ -100,7 +114,12 @@ function displayArticles(articlesData) {
   });
 
 
-  // Open edit modal function
+// name:  openEditModal
+// description : opens the edit modal
+// parameters: articleId 
+// return parameters: N/A 
+
+  
   function openEditModal(articleId) {
     // Set the data-article-id attribute for later retrieval
     $('#saveChangesBtn').data('article-id', articleId);
@@ -109,8 +128,10 @@ function displayArticles(articlesData) {
     $('#modal').show();
   }
 
-
-  // Close modal function
+// name:  closeModal
+// description : erases the input texts and closes the edit modal
+// parameters: N/A
+// return parameters: N/A 
   function closeModal() {
     $('#editTitle').val('');
     $('#editPublishDate').val('');
@@ -118,7 +139,12 @@ function displayArticles(articlesData) {
     $('#modal').hide();
   }
 
-  // Save changes function
+
+// name:  saveChanges
+// description : once the saved canges button is clicked then the appropriate parameters are validated ()
+// (the user will be alerted if incorrect) and then the article is updated, and the modal is closed 
+// parameters: articleId
+// return parameters: N/A 
   function saveChanges(articleId) {
     // Get values from the modal
     var updatedTitle = $('#editTitle').val();
@@ -142,8 +168,6 @@ function displayArticles(articlesData) {
       updatedData.publish_date = updatedPublishDate;
     }
 
-
-
     if (updatedSummary) {
       updatedData.summary = updatedSummary;
     }
@@ -157,11 +181,7 @@ function displayArticles(articlesData) {
         console.log(response);
 
         var articleDiv = $('#articleList').find(`[data-article-id="${articleId}"]`);
-
-
         reloadArticles(order, category);
-
-
         closeModal();
       },
       error: function (xhr, status, error) {
@@ -171,6 +191,10 @@ function displayArticles(articlesData) {
     });
   }
 
+// name:  onclick listener for the saveChangesBtn  button 
+// description : when button is clicked the saveChanges function is called 
+// parameters: takes the article id from the html 
+// return parameters: N/A 
   // Event listener for the save button in the modal
   $('#saveChangesBtn').click(function () {
     var articleId = $(this).data('article-id');
@@ -178,24 +202,42 @@ function displayArticles(articlesData) {
 
   });
 
+// name:  onclick listener for the modalCloseBtn button 
+// description : when clicked, the modal is closed 
+// parameters: N/A 
+// return parameters:N/A
   // Event listener for closing the modal
   $('#modalCloseBtn').click(function () {
     closeModal();
   });
 
 
+// name:  
+// description 
+// parameters: 
+// return parameters:
+
   articleList.on('click', '.addPictureBtn', function () {
     var articleId = $(this).data('article-id');
     // Call a function to handle adding a picture to the article with ID 'articleId'
     // Example: addPictureToArticle(articleId);
   });
-
+  
+// name:  
+// description : 
+// parameters: 
+// return parameters:
   articleList.on('click', '.viewPicturesBtn', function () {
     var articleId = $(this).data('article-id');
     // Call a function to handle viewing pictures associated with the article with ID 'articleId'
     // Example: viewPicturesOfArticle(articleId);
   });
 }
+
+// name:  reloadArticles
+// description : displays the articles according to the order and category recieved 
+// parameters: order and category 
+// return parameters: N/A 
 
 // Function to fetch and display articles with sorting parameters
 function reloadArticles(order, category) {
@@ -244,9 +286,12 @@ function reloadArticles(order, category) {
   });
 }
 
+// name: a ready funtion for when the html is loaded 
+// description : loads the articles according to default, and has event listeners fot the saveDisplayChanges
+// parameters: N/A 
+// return parameters: N/A 
+
 $(document).ready(function () {
-
-
   // Trigger reloadArticles with default values only on page load
   reloadArticles(order, category);
 
@@ -259,8 +304,6 @@ $(document).ready(function () {
     order = $(this).val();
   });
 
-
-
   // Event listener for Save Changes button click
   $('#saveDisplayChanges').click(function () {
     console.log("order:", order, "category", category)
@@ -268,7 +311,11 @@ $(document).ready(function () {
   });
 });
 
-// Function to open the add article form
+// name:  openAddArticleForm
+// description : Function to open the add article form (modal)
+// parameters: N/A 
+// return parameters: N/A 
+
 function openAddArticleForm() {
   // Clear form inputs
   $('#addArticleForm input, #addArticleForm textarea').val('');
@@ -280,15 +327,29 @@ function openAddArticleForm() {
   $('#addArticleForm').show();
 }
 
-// Event listener for "Add Article" buttons
+// name: onclick listener for the addArticleAbove and addArticleBelow buttons 
+// description : when one of the buttons are clicked then the openAddArticleForm function is called 
+// parameters: N/A 
+// return parameters:N/A 
+
 $('#addArticleAbove, #addArticleBelow').click(function () {
   openAddArticleForm();
 });
 
-// Event listener for closing the add article form
+// name: onclick listener for the formCloseBtn button
+// description : Event listener for closing the add article form
+// parameters: N/A 
+// return parameters: N/A 
+
 $('#formCloseBtn').click(function () {
   $('#addArticleForm').hide();
 });
+
+// name:  onclick listener for the saveArticleBtn button 
+// description : when clicked then the fields that the user filled in are checked (if needed, an alert 
+// is sent to the user) and then an ajax request is sent toadd a new article 
+// parameters:  N/A 
+// return parameters: N/A 
 
 // Event listener for saving a new article
 $('#saveArticleBtn').click(function () {
@@ -332,25 +393,7 @@ $('#saveArticleBtn').click(function () {
 
   console.log("title", title)
 
-  // // Make an AJAX request to create a new article
-  // $.ajax({
-  //   url: '/articles',
-  //   type: 'POST',
-  //   contentType: 'application/json',
-  //   data: JSON.stringify(newArticle),
-  //   success: function (response) {
-  //     console.log(response);
-  //     // Reload articles to display the newly added article
-  //     reloadArticles(order, category);
-  //     // Close the add article form
-  //     $('#addArticleForm').hide();
-  //   },
-  //   error: function (xhr, status, error) {
-  //     console.error(xhr.responseText);
-  //     alert("An error occurred while adding the article.");
-  //   }
-  // });
-
+ 
   // Make an AJAX request to create a new article
 $.ajax({
   url: '/articles',

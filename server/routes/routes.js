@@ -3,7 +3,6 @@ const express = require('express'),
 
 var router = express.Router();
 
-//articles
 router.post('/articles', articlesRoutes.CreateArticle);
 router.put('/articles/:id', articlesRoutes.updateArticle); // http://localhost:3001/articles/123
 router.put('/articles/:id/images', articlesRoutes.AddImagesToArticle);

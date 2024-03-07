@@ -1,38 +1,26 @@
 {
-  "aID": {
+  "aid": {
     "title": "title",
     "publish_date": "2021-01-01",
     "writer": {
-      "name": "a",
+      "name": "aname",
       "email": "a@gmail.com",
-      "mobile_phone": "a053",
+      "mobile_phone": "a123",
       "home_phone": "a02"
     },
     "images": [],
-    "id": "aID"
+    "id": "aid"
   },
-  "bID": {
+  "bid": {
     "title": "title",
-    "publish_date": "2024-03-05",
+    "publish_date": "2021-01-01",
     "writer": {
-      "name": "c",
-      "email": "c@gmail.com",
-      "mobile_phone": "c053",
-      "home_phone": "c02"
-    },
-    "images": [],
-    "id": "bID"
-  },
-  "v": {
-    "title": "title",
-    "publish_date": "2024-03-05",
-    "writer": {
-      "name": "v",
+      "name": "bname",
       "email": "shayna5762@gmail.com",
-      "mobile_phone": "v",
-      "home_phone": "v"
+      "mobile_phone": "bb",
+      "home_phone": "bb"
     },
     "images": [],
-    "id": "v"
+    "id": "bid"
   }
 }
