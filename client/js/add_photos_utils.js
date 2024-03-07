@@ -1,3 +1,7 @@
+// name: ready function  
+// description: this function deals with all of the functonality in for the add photos button, as described in the following 
+// parameters: N/A 
+// return parameters: N/A 
 $(document).ready(function () {
     const clientId = 'ToUIN5-e_9vpQjCge_eRLPinR-aM0LJ6SQsZdXTiM7Q';
     let currentPage = 1;
@@ -10,7 +14,11 @@ $(document).ready(function () {
         searchButtonClicked = false;
     });
 
-    // Handle the search button click
+
+    // name: onclick for the seearch button 
+    // description: when clicked, then the input from the search bar is sent to the searchImages function 
+    // parameters: N/A 
+    // return parameters: N/A 
     $('#searchBtn').on('click', function () {
         searchButtonClicked = true;
         const query = $('#searchInput').val();
@@ -22,10 +30,19 @@ $(document).ready(function () {
         }
     });
 
+    // name: onclick function for the exit button  
+    // description: when clicked, return back to the article list 
+    // parameters:  N/A 
+    // return parameters:N/A 
     $('#exit').on('click', function () {
         // Navigate back to the previous page in the browser's history
         window.history.back();
     });
+
+    // name:  searchImages
+    // description: the query is sent to the unsplash server to serach for the image 
+    // parameters: query - a string with the type of picture to search for. 
+    // return parameters:N/A 
 
     function searchImages(query) {
         // Only proceed if the search button was clicked
@@ -50,6 +67,10 @@ $(document).ready(function () {
         }
     }
 
+    // name:  displayImages
+    // description: displays the images recieved from unsplash 
+    // parameters: list of images (as recieved from the ajax ) 
+    // return parameters: N/A 
     function displayImages(images) {
         const imageContainer = $('#imageContainer');
         imageContainer.empty();
@@ -64,15 +85,10 @@ $(document).ready(function () {
             imageDiv.append(addButton);
             imageContainer.append(imageDiv);
 
-
-            // Handle the add button click here
-            // addButton.on('click', function () {
-            //     alert("Add button clicked for image:\n" +
-            //         "ID: " + image.id + "\n" +
-            //         "URL: " + image.urls.thumb + "\n" +
-            //         "Description: " + image.alt_description);
-            // });
-
+            // name:  on clicke listener for addButton button 
+            // description: when clicked, the addImagesToArticle function is called 
+            // parameters: N/A 
+            // return parameters: N/A 
             addButton.on('click', function () {
                 // Call the function to add images to the article
                 addImagesToArticle(image);
@@ -81,24 +97,28 @@ $(document).ready(function () {
         });
     }
 
+    // name:  addImagesToArticle
+    // description: adds the image recieved to the article id 
+    // parameters: image
+    // return parameters: N/A 
     function addImagesToArticle(image) {
         // Extract articleId from the current URL
         const urlParams = new URLSearchParams(window.location.search);
         const articleId = urlParams.get('articleId');
-    
+
         // Ensure articleId is available
         if (!articleId) {
             console.error('ArticleId not found in the URL');
             return;
         }
-    
+
         // Prepare the data to send in the POST request
         const imageDetails = {
             id: image.id,
             thumb_url: image.urls.thumb,
             description: image.alt_description,
         };
-    
+
         // Make the AJAX request to add images to the article
         $.ajax({
             url: `/articles/${articleId}/images`,
@@ -114,5 +134,5 @@ $(document).ready(function () {
             }
         });
     }
-    
+
 });

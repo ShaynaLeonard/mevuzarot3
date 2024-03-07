@@ -222,7 +222,7 @@ const addImagesToArticleSchema = yup.object({
 // description :receives the article id from the parameters sent and imageDetails for the req 
 // validates the imageDetails with the yup schema, sends alerts to the user if needed and adds the images  
 // parameters: receives the article id from the parameters sent and imageDetails for the req 
-// return parameters: 200 if success and 400 if there were validation errors 
+// return parameters: 200 if success and 400/404 if there were validation errors 
 const AddImagesToArticle = async (req, res) => {
     const articleId = req.params["id"];
 
@@ -277,8 +277,8 @@ const AddImagesToArticle = async (req, res) => {
 };
 
 // name:  getArticles
-// description : 
-// parameters: 
+// description : gets the list of articles from the json file 
+// parameters: N/A 
 // return parameters: status 500 if there is an error 
 //READ
 const getArticles = async (req, res) => {
@@ -292,6 +292,10 @@ const getArticles = async (req, res) => {
     });
 };
 
+// name:  getArticle
+// description : gets a article based on the id received 
+// parameters: articleID from req 
+// return parameters: status 200 if success and status 404 if article is not found 
 const getArticle = (req, res) => {
     const articleId = req.params.id;
 
@@ -305,6 +309,11 @@ const getArticle = (req, res) => {
     }, true);
 };
 
+
+// name:  deleteArticle
+// description : deletes an article based on the id received 
+// parameters:  articleID from the req 
+// return parameters: N/A 
 //DELETE
 const deleteArticle = (req, res) => {
     const articleId = req.params.id;
@@ -320,6 +329,11 @@ const deleteArticle = (req, res) => {
         }
     }, true);
 };
+
+// name:  deleteImageFromArticle
+// description : deletes an image from an article according to ids 
+// parameters: articleId and imageId from the prams 
+// return parameters: starus 200 if ok and 400/404 if error 
 
 const deleteImageFromArticle = async (req, res) => {
     const articleId = req.params["id"];

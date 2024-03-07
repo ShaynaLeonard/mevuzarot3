@@ -119,8 +119,6 @@ function displayArticles(articlesData) {
   // description : opens the edit modal
   // parameters: articleId 
   // return parameters: N/A 
-
-
   function openEditModal(articleId) {
     // Set the data-article-id attribute for later retrieval
     $('#saveChangesBtn').data('article-id', articleId);
@@ -213,29 +211,30 @@ function displayArticles(articlesData) {
   });
 
 
-  // name:  
-  // description 
-  // parameters: 
-  // return parameters:
-
+  // name:  on click listener for the addPictureBtn
+  // description routes the user to the add_photos html  
+  // parameters: N/A 
+  // return parameters: N/A 
   articleList.on('click', '.addPictureBtn', function () {
     var articleId = $(this).data('article-id');
-
     window.location.href = '/add_photos?articleId=' + articleId;
   });
 
 
-  // name:  
-  // description : 
-  // parameters: 
-  // return parameters:
+  // name:  onclick listener for the viewPicturesBtn button  
+  // description : calls the viewPicturesOfArticle function 
+  // parameters: N/A 
+  // return parameters: N/A 
   articleList.on('click', '.viewPicturesBtn', function () {
-
     var articleId = $(this).data('article-id');
     // Call a function to handle viewing pictures associated with the article with ID 'articleId'
     viewPicturesOfArticle(articleId);
   });
 
+  // name:  viewPicturesOfArticle
+  // description: sends a ajax request to display the images of a certain article 
+  // parameters: articleId
+  // return parameters: N/A
   function viewPicturesOfArticle(articleId) {
     // Make an AJAX request to fetch article details
     $.ajax({
@@ -258,6 +257,11 @@ function displayArticles(articlesData) {
     });
   }
 
+
+  // name:  displayImages
+  // description: display the images of a recieved article id 
+  // parameters: images (list of images for a certain article), articleId
+  // return parameters: N/A 
   function displayImages(images, articleId) {
     // Assuming you have a container in your HTML to display images
 
@@ -280,21 +284,34 @@ function displayArticles(articlesData) {
 
     });
 
-    // Show the container or perform any other necessary actions
     imageContainer.show();
 
+
     const hideButton = $('<button class="hidePicturesButton">Hide Pictures</button>');
+
+    // name:  onclick listener for hideButton
+    // description: calls the hidePictures function 
+    // parameters: N/A 
+    // return parameters: N/A 
     hideButton.on('click', function () {
       hidePictures(articleId);
     });
     imageContainer.append(hideButton);
   }
 
+  // name:  hidePictures
+  // description: hides the images of a certain article 
+  // parameters: articleId
+  // return parameters: N/A 
   function hidePictures(articleId) {
     const imageContainer = $("#imageContainer-" + articleId);
     imageContainer.hide();
   }
 
+  // name:  deleteImageFromArticle
+  // description: deletes an image from a article 
+  // parameters: articleId, imageId
+  // return parameters: N/A 
   function deleteImageFromArticle(articleId, imageId) {
     $.ajax({
       url: '/articles/' + articleId + '/images/' + imageId,
@@ -312,6 +329,11 @@ function displayArticles(articlesData) {
     });
   }
 
+
+  // name:  viewPicturesOfArticleAfterDelete
+  // description:  after images are deleted from an article this function is used to display the remaining images of the article 
+  // parameters: articleId
+  // return parameters: N/A 
   function viewPicturesOfArticleAfterDelete(articleId) {
     // Make an AJAX request to fetch article details
     $.ajax({
@@ -321,7 +343,7 @@ function displayArticles(articlesData) {
         displayImages(articleData.images, articleId);
         if (articleData.images && articleData.images.length == 0) {
           hidePictures(articleId)
-        } 
+        }
 
       },
       error: function (error) {
