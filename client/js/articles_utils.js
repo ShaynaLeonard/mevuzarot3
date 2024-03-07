@@ -235,16 +235,21 @@ function displayArticles(articlesData) {
     // Call a function to handle viewing pictures associated with the article with ID 'articleId'
     viewPicturesOfArticle(articleId);
   });
-  
+
   function viewPicturesOfArticle(articleId) {
     // Make an AJAX request to fetch article details
     $.ajax({
       url: '/articles/' + articleId,
       method: 'GET',
       success: function (articleData) {
-        // Assuming images are stored in the articleData.images array
-        displayImages(articleData.images,articleId );
-        
+        if (articleData.images && articleData.images.length > 0) {
+          // If the article has pictures, display them
+          displayImages(articleData.images, articleId);
+        } else {
+          // If the article has no pictures, display an alert
+          alert('This article has no pictures.');
+        }
+
       },
       error: function (error) {
         console.error('Error fetching article details:', error);
@@ -252,30 +257,81 @@ function displayArticles(articlesData) {
       }
     });
   }
-  
+
   function displayImages(images, articleId) {
     // Assuming you have a container in your HTML to display images
 
-    const imageContainer = $("#imageContainer-"+ articleId);
+    const imageContainer = $("#imageContainer-" + articleId);
     imageContainer.empty();
-  
+
     images.forEach(function (image) {
       const imageDiv = $('<div class="image"></div>');
       const img = $('<img src="' + image.thumb_url + '">');
-  
+
+      const deleteButton = $('<button class="deleteImageButton">Delete</button>');
       imageDiv.append(img);
+      imageDiv.append(deleteButton);
       imageContainer.append(imageDiv);
+
+      deleteButton.on('click', function () {
+        deleteImageFromArticle(articleId, image.id);
+      });
+
+
     });
-  
+
     // Show the container or perform any other necessary actions
     imageContainer.show();
+
+    const hideButton = $('<button class="hidePicturesButton">Hide Pictures</button>');
+    hideButton.on('click', function () {
+      hidePictures(articleId);
+    });
+    imageContainer.append(hideButton);
   }
+
+  function hidePictures(articleId) {
+    const imageContainer = $("#imageContainer-" + articleId);
+    imageContainer.hide();
+  }
+
+  function deleteImageFromArticle(articleId, imageId) {
+    $.ajax({
+      url: '/articles/' + articleId + '/images/' + imageId,
+      type: 'DELETE',
+      success: function (response) {
+        console.log(response); // Log the server response
+
+        // Reload the images for the current article after deletion
+        viewPicturesOfArticleAfterDelete(articleId);
+      },
+      error: function (xhr, status, error) {
+        console.error(xhr.responseText); // Log any errors
+        alert("An error occurred while deleting the image.");
+      }
+    });
+  }
+
+  function viewPicturesOfArticleAfterDelete(articleId) {
+    // Make an AJAX request to fetch article details
+    $.ajax({
+      url: '/articles/' + articleId,
+      method: 'GET',
+      success: function (articleData) {
+        displayImages(articleData.images, articleId);
+        if (articleData.images && articleData.images.length == 0) {
+          hidePictures(articleId)
+        } 
+
+      },
+      error: function (error) {
+        console.error('Error fetching article details:', error);
+        alert('Error fetching article details. Please try again.');
+      }
+    });
+  }
+
 }
-
-
-
-
-
 
 // name:  reloadArticles
 // description : displays the articles according to the order and category recieved 
