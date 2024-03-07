@@ -353,6 +353,8 @@ $('#formCloseBtn').click(function () {
 
 // Event listener for saving a new article
 $('#saveArticleBtn').click(function () {
+  console.log($('#' + 'title').val())
+
 
   //change 
   $('.error-message').remove();
@@ -362,6 +364,7 @@ $('#saveArticleBtn').click(function () {
 
   requiredFields.forEach(function (fieldName) {
     var fieldValue = $('#' + fieldName).val();
+
 
     if (!fieldValue) {
       // Display error message above the input field
@@ -377,25 +380,31 @@ $('#saveArticleBtn').click(function () {
   }
 
 
-  // Get values from the form
   var newArticle = {
     title: $('#title').val(),
     publish_date: $('#publishDate').val(),
     summary: $('#summary').val(),
     writer: {
-      name: $('#writerName').val(),
-      email: $('#writerEmail').val(),
-      mobile_phone: $('#mobilePhone').val(),
-      home_phone: $('#homePhone').val(),
+        name: $('#writerName').val(),
+        email: $('#writerEmail').val(),
+        mobile_phone: $('#mobilePhone').val(),
+        home_phone: $('#homePhone').val(),
     },
     ID: $('#articleId').val(),
-  };
 
-  console.log("title", title)
+};
 
- 
-  // Make an AJAX request to create a new article
 $.ajax({
+
+  url: '/articles/' + newArticle.ID, // Use the endpoint for fetching a single article
+  type: 'GET',
+  success: function (response) {
+    // If the article already exists, inform the user and return
+    console.log("got the article");
+    alert(`Article with ID ${newArticle.ID} already exists. You can only update existing articles.`);
+  },
+  error: function (xhr, status, error) {
+    $.ajax({
   url: '/articles',
   type: 'POST',
   contentType: 'application/json',
@@ -420,7 +429,8 @@ $.ajax({
       }
   }
 });
-
+  }
+});
 });
 
 

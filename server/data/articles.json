@@ -1,8 +1,13 @@
 {
+<<<<<<< HEAD
   "aid": {
+=======
+  "w": {
+>>>>>>> abd39c37efdc440dc7b8c3ceebd15100e789409b
     "title": "title",
-    "publish_date": "2021-01-01",
+    "publish_date": "2020-02-02",
     "writer": {
+<<<<<<< HEAD
       "name": "aname",
       "email": "a@gmail.com",
       "mobile_phone": "a123",
@@ -22,5 +27,38 @@
     },
     "images": [],
     "id": "bid"
+=======
+      "name": "e",
+      "email": "d@gmail.com",
+      "mobile_phone": "3",
+      "home_phone": "34"
+    },
+    "images": [],
+    "id": "w"
+  },
+  "r4r4r4r4": {
+    "title": "title",
+    "publish_date": "2020-02-02",
+    "writer": {
+      "name": "s",
+      "email": "d@gmail.com",
+      "mobile_phone": "345",
+      "home_phone": "45345"
+    },
+    "images": [],
+    "id": "r4r4r4r4"
+  },
+  "sdnf": {
+    "title": "title",
+    "publish_date": "2020-02-02",
+    "writer": {
+      "name": "d",
+      "email": "d@gmail.com",
+      "mobile_phone": "2354",
+      "home_phone": "2354"
+    },
+    "images": [],
+    "id": "sdnf"
+>>>>>>> abd39c37efdc440dc7b8c3ceebd15100e789409b
   }
 }
