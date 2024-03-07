@@ -11,4 +11,6 @@ router.get('/articles', articlesRoutes.getArticles);
 router.delete('/articles/:id/images/:imageId', articlesRoutes.deleteImageFromArticle);
 router.delete('/articles/:id', articlesRoutes.deleteArticle);
 
+
+
 module.exports = router;

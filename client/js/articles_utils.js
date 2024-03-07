@@ -216,12 +216,12 @@ function displayArticles(articlesData) {
 // description 
 // parameters: 
 // return parameters:
+articleList.on('click', '.addPictureBtn', function () {
+  var articleId = $(this).data('article-id');
+  // Redirect to add_user_form.html when addPictureBtn is clicked
+  window.location.href = '/add_photos';
+});
 
-  articleList.on('click', '.addPictureBtn', function () {
-    var articleId = $(this).data('article-id');
-    // Call a function to handle adding a picture to the article with ID 'articleId'
-    // Example: addPictureToArticle(articleId);
-  });
   
 // name:  
 // description : 

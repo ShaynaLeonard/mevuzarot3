@@ -8,31 +8,18 @@ const port = 3001;
 
 const app=express();
 
-app.use('/main', express.static(path.join(__dirname, 'client/html/index.html')));
 app.use('/list', express.static(path.join(__dirname, 'client/html/index.html'))); // Serve index.html for /list
+// app.use('/add_photos.html', express.static(path.join(__dirname, 'client/html')));
+app.use('/add_photos', express.static(path.join(__dirname, 'client/html/add_photos.html')));
 
-app.use('/list_articles', express.static(path.join(__dirname, 'client/html/list.html')));
-
-//app.use('/add_articles', express.static(path.join(__dirname, 'client/html/add_article_form.html')));
 
 app.use('/js', express.static(path.join(__dirname, 'client/js')));
 
-/*app.get('/',(req,res) => {fs.readFile('client/html/index.html',  (err, html) => {
-    if (err) {
-        throw err; 
-    }       
-    
-    res.writeHeader(200, {"Content-Type": "text/html"});  
-    res.write(html);  
-    res.end();  
-    })
-});*/
-
 app.use('/css', express.static(path.join(__dirname, 'client/css')));
 
-//restfull 
-//app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/', routers);
