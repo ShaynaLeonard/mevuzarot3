@@ -62,6 +62,7 @@ function displayArticles(articlesData) {
         <button class="editBtn" data-article-id="${article.id}">Edit</button>
         <button class="addPictureBtn" data-article-id="${article.id}">Add Picture</button>
         <button class="viewPicturesBtn" data-article-id="${article.id}">View Pictures</button>
+        <div class="imageContainer" id="imageContainer-${article.id}"></div>
         <hr>
       </div>
       
@@ -70,10 +71,10 @@ function displayArticles(articlesData) {
     articleList.append(articleHtml);
   });
 
-// name:  onclick listener for deleteBtn button 
-// description : when the button is clicled the article is deleted from the json file and removed from the html display 
-// parameters: none sent to the function (receives the id and the div of te article from the html)
-// return parameters: N/A 
+  // name:  onclick listener for deleteBtn button 
+  // description : when the button is clicled the article is deleted from the json file and removed from the html display 
+  // parameters: none sent to the function (receives the id and the div of te article from the html)
+  // return parameters: N/A 
   // Add event listeners for the buttons
   articleList.on('click', '.deleteBtn', function () {
     var articleId = $(this).data('article-id');
@@ -99,11 +100,11 @@ function displayArticles(articlesData) {
   });
 
 
-  
-// name:  onclick listener for editBtn button  
-// description : when clicked a modal is opened so that you can edit specific details of an article. Once the save button is clicked the article is updated.  
-// parameters: recieves the article id from the html 
-// return parameters: N/A 
+
+  // name:  onclick listener for editBtn button  
+  // description : when clicked a modal is opened so that you can edit specific details of an article. Once the save button is clicked the article is updated.  
+  // parameters: recieves the article id from the html 
+  // return parameters: N/A 
   articleList.on('click', '.editBtn', function () {
     var articleId = $(this).data('article-id');
 
@@ -114,12 +115,12 @@ function displayArticles(articlesData) {
   });
 
 
-// name:  openEditModal
-// description : opens the edit modal
-// parameters: articleId 
-// return parameters: N/A 
+  // name:  openEditModal
+  // description : opens the edit modal
+  // parameters: articleId 
+  // return parameters: N/A 
 
-  
+
   function openEditModal(articleId) {
     // Set the data-article-id attribute for later retrieval
     $('#saveChangesBtn').data('article-id', articleId);
@@ -128,10 +129,10 @@ function displayArticles(articlesData) {
     $('#modal').show();
   }
 
-// name:  closeModal
-// description : erases the input texts and closes the edit modal
-// parameters: N/A
-// return parameters: N/A 
+  // name:  closeModal
+  // description : erases the input texts and closes the edit modal
+  // parameters: N/A
+  // return parameters: N/A 
   function closeModal() {
     $('#editTitle').val('');
     $('#editPublishDate').val('');
@@ -140,11 +141,11 @@ function displayArticles(articlesData) {
   }
 
 
-// name:  saveChanges
-// description : once the saved canges button is clicked then the appropriate parameters are validated ()
-// (the user will be alerted if incorrect) and then the article is updated, and the modal is closed 
-// parameters: articleId
-// return parameters: N/A 
+  // name:  saveChanges
+  // description : once the saved canges button is clicked then the appropriate parameters are validated ()
+  // (the user will be alerted if incorrect) and then the article is updated, and the modal is closed 
+  // parameters: articleId
+  // return parameters: N/A 
   function saveChanges(articleId) {
     // Get values from the modal
     var updatedTitle = $('#editTitle').val();
@@ -191,10 +192,10 @@ function displayArticles(articlesData) {
     });
   }
 
-// name:  onclick listener for the saveChangesBtn  button 
-// description : when button is clicked the saveChanges function is called 
-// parameters: takes the article id from the html 
-// return parameters: N/A 
+  // name:  onclick listener for the saveChangesBtn  button 
+  // description : when button is clicked the saveChanges function is called 
+  // parameters: takes the article id from the html 
+  // return parameters: N/A 
   // Event listener for the save button in the modal
   $('#saveChangesBtn').click(function () {
     var articleId = $(this).data('article-id');
@@ -202,37 +203,79 @@ function displayArticles(articlesData) {
 
   });
 
-// name:  onclick listener for the modalCloseBtn button 
-// description : when clicked, the modal is closed 
-// parameters: N/A 
-// return parameters:N/A
+  // name:  onclick listener for the modalCloseBtn button 
+  // description : when clicked, the modal is closed 
+  // parameters: N/A 
+  // return parameters:N/A
   // Event listener for closing the modal
   $('#modalCloseBtn').click(function () {
     closeModal();
   });
 
 
-// name:  
-// description 
-// parameters: 
-// return parameters:
-articleList.on('click', '.addPictureBtn', function () {
-  var articleId = $(this).data('article-id');
-  // Redirect to add_user_form.html when addPictureBtn is clicked
-  window.location.href = '/add_photos';
-});
+  // name:  
+  // description 
+  // parameters: 
+  // return parameters:
 
-  
-// name:  
-// description : 
-// parameters: 
-// return parameters:
+  articleList.on('click', '.addPictureBtn', function () {
+    var articleId = $(this).data('article-id');
+
+    window.location.href = '/add_photos?articleId=' + articleId;
+  });
+
+
+  // name:  
+  // description : 
+  // parameters: 
+  // return parameters:
   articleList.on('click', '.viewPicturesBtn', function () {
+
     var articleId = $(this).data('article-id');
     // Call a function to handle viewing pictures associated with the article with ID 'articleId'
-    // Example: viewPicturesOfArticle(articleId);
+    viewPicturesOfArticle(articleId);
   });
+  
+  function viewPicturesOfArticle(articleId) {
+    // Make an AJAX request to fetch article details
+    $.ajax({
+      url: '/articles/' + articleId,
+      method: 'GET',
+      success: function (articleData) {
+        // Assuming images are stored in the articleData.images array
+        displayImages(articleData.images,articleId );
+        
+      },
+      error: function (error) {
+        console.error('Error fetching article details:', error);
+        alert('Error fetching article details. Please try again.');
+      }
+    });
+  }
+  
+  function displayImages(images, articleId) {
+    // Assuming you have a container in your HTML to display images
+
+    const imageContainer = $("#imageContainer-"+ articleId);
+    imageContainer.empty();
+  
+    images.forEach(function (image) {
+      const imageDiv = $('<div class="image"></div>');
+      const img = $('<img src="' + image.thumb_url + '">');
+  
+      imageDiv.append(img);
+      imageContainer.append(imageDiv);
+    });
+  
+    // Show the container or perform any other necessary actions
+    imageContainer.show();
+  }
 }
+
+
+
+
+
 
 // name:  reloadArticles
 // description : displays the articles according to the order and category recieved 
@@ -385,52 +428,52 @@ $('#saveArticleBtn').click(function () {
     publish_date: $('#publishDate').val(),
     summary: $('#summary').val(),
     writer: {
-        name: $('#writerName').val(),
-        email: $('#writerEmail').val(),
-        mobile_phone: $('#mobilePhone').val(),
-        home_phone: $('#homePhone').val(),
+      name: $('#writerName').val(),
+      email: $('#writerEmail').val(),
+      mobile_phone: $('#mobilePhone').val(),
+      home_phone: $('#homePhone').val(),
     },
     ID: $('#articleId').val(),
 
-};
+  };
 
-$.ajax({
+  $.ajax({
 
-  url: '/articles/' + newArticle.ID, // Use the endpoint for fetching a single article
-  type: 'GET',
-  success: function (response) {
-    // If the article already exists, inform the user and return
-    console.log("got the article");
-    alert(`Article with ID ${newArticle.ID} already exists. You can only update existing articles.`);
-  },
-  error: function (xhr, status, error) {
-    $.ajax({
-  url: '/articles',
-  type: 'POST',
-  contentType: 'application/json',
-  data: JSON.stringify(newArticle),
-  success: function (response) {
-      console.log(response);
-      // Reload articles to display the newly added article
-      reloadArticles(order, category);
-      // Close the add article form
-      $('#addArticleForm').hide();
-  },
-  error: function (xhr, status, error) {
-      if (xhr.responseJSON && xhr.responseJSON.errors) {
-          // Display specific validation errors
-          Object.entries(xhr.responseJSON.errors).forEach(([field, message]) => {
+    url: '/articles/' + newArticle.ID, // Use the endpoint for fetching a single article
+    type: 'GET',
+    success: function (response) {
+      // If the article already exists, inform the user and return
+      console.log("got the article");
+      alert(`Article with ID ${newArticle.ID} already exists. You can only update existing articles.`);
+    },
+    error: function (xhr, status, error) {
+      $.ajax({
+        url: '/articles',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(newArticle),
+        success: function (response) {
+          console.log(response);
+          // Reload articles to display the newly added article
+          reloadArticles(order, category);
+          // Close the add article form
+          $('#addArticleForm').hide();
+        },
+        error: function (xhr, status, error) {
+          if (xhr.responseJSON && xhr.responseJSON.errors) {
+            // Display specific validation errors
+            Object.entries(xhr.responseJSON.errors).forEach(([field, message]) => {
               alert(`${field}: ${message}`);
-          });
-      } else {
-          // Display a generic error message
-          console.error(xhr.responseText);
-          alert("An error occurred while adding the article.");
-      }
-  }
-});
-  }
-});
+            });
+          } else {
+            // Display a generic error message
+            console.error(xhr.responseText);
+            alert("An error occurred while adding the article.");
+          }
+        }
+      });
+    }
+  });
 });
 
 

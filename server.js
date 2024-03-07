@@ -9,7 +9,6 @@ const port = 3001;
 const app=express();
 
 app.use('/list', express.static(path.join(__dirname, 'client/html/index.html'))); // Serve index.html for /list
-// app.use('/add_photos.html', express.static(path.join(__dirname, 'client/html')));
 app.use('/add_photos', express.static(path.join(__dirname, 'client/html/add_photos.html')));
 
 

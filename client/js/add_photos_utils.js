@@ -1,25 +1,30 @@
-$(document).ready(function() {
+$(document).ready(function () {
     const clientId = 'ToUIN5-e_9vpQjCge_eRLPinR-aM0LJ6SQsZdXTiM7Q';
     let currentPage = 1;
 
     // Keep track of whether the search button was clicked
     let searchButtonClicked = false;
 
-    $('#searchInput').on('input', function() {
+    $('#searchInput').on('input', function () {
         // Reset the flag when the user is typing
-        console.log("in input")
         searchButtonClicked = false;
     });
 
     // Handle the search button click
-    $('#searchBtn').on('click', function() {
-        console.log("clicked the search button")
-        alert("clicked the serach button")
+    $('#searchBtn').on('click', function () {
         searchButtonClicked = true;
         const query = $('#searchInput').val();
         if (query.length >= 2) {
             searchImages(query);
         }
+        else {
+            alert("You need to enter an input of at least 2 letters")
+        }
+    });
+
+    $('#exit').on('click', function () {
+        // Navigate back to the previous page in the browser's history
+        window.history.back();
     });
 
     function searchImages(query) {
@@ -30,15 +35,15 @@ $(document).ready(function() {
             $.ajax({
                 url: apiUrl,
                 method: 'GET',
-                success: function(data) {
-                    displayImages(data.results);
-                    if (currentPage < data.total_pages) {
-                        $('#loadMoreBtn').show();
-                    } else {
-                        $('#loadMoreBtn').hide();
+                success: function (data) {
+                    if (data.results.length === 0) {
+                        alert("No results found.");
+                    }
+                    else {
+                        displayImages(data.results);
                     }
                 },
-                error: function(error) {
+                error: function (error) {
                     console.error('Error fetching images:', error);
                 }
             });
@@ -52,35 +57,62 @@ $(document).ready(function() {
         images.forEach(function (image) {
             const imageDiv = $('<div class="image"></div>');
             const img = $('<img src="' + image.urls.thumb + '">');
-            const detailsContainer = $('<div class="detailsContainer"></div>');
-            const detailsBtn = $('<button>Details</button>');
+            const addButton = $('<button class="addButton">Add</button>');
+
 
             imageDiv.append(img);
-            imageDiv.append(detailsContainer.append(detailsBtn));
+            imageDiv.append(addButton);
             imageContainer.append(imageDiv);
 
-            detailsBtn.on('click', function () {
-                showDetails(detailsContainer, image.alt_description, image.urls.small, image.likes, image.description, image.urls.thumb);
+
+            // Handle the add button click here
+            // addButton.on('click', function () {
+            //     alert("Add button clicked for image:\n" +
+            //         "ID: " + image.id + "\n" +
+            //         "URL: " + image.urls.thumb + "\n" +
+            //         "Description: " + image.alt_description);
+            // });
+
+            addButton.on('click', function () {
+                // Call the function to add images to the article
+                addImagesToArticle(image);
             });
+
         });
     }
 
-    $('#loadMoreBtn').on('click', function() {
-        currentPage++;
-        const query = $('#searchInput').val();
-        searchImages(query);
-    });
+    function addImagesToArticle(image) {
+        // Extract articleId from the current URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const articleId = urlParams.get('articleId');
+    
+        // Ensure articleId is available
+        if (!articleId) {
+            console.error('ArticleId not found in the URL');
+            return;
+        }
+    
+        // Prepare the data to send in the POST request
+        const imageDetails = {
+            id: image.id,
+            thumb_url: image.urls.thumb,
+            description: image.alt_description,
+        };
+    
+        // Make the AJAX request to add images to the article
+        $.ajax({
+            url: `/articles/${articleId}/images`,
+            method: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(imageDetails),
+            success: function (response) {
+                alert(response); // Show a success message
+            },
+            error: function (error) {
+                console.error('Error adding images to article:', error);
+                alert('Error adding images to article. Please try again.');
+            }
+        });
+    }
+    
 });
-
-function showDetails(container, title, imageUrl, likes, description, thumbUrl) {
-    // Check if title or description is null or undefined
-    title = title || 'there is none';
-    description = description || 'there is none';
-
-    const detailsContent = '<div class="detailsContent"><img src="' + thumbUrl + '" width="10" height="10"><p>Title: ' + title + '</p><p>Description: ' + description + '</p><p>Likes: ' + likes + '</p></div>';
-    // Remove any existing details content
-    container.find('.detailsContent').remove();
-
-    // Append the new details content
-    container.append(detailsContent);
-}

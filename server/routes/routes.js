@@ -11,6 +11,12 @@ router.get('/articles', articlesRoutes.getArticles);
 router.delete('/articles/:id/images/:imageId', articlesRoutes.deleteImageFromArticle);
 router.delete('/articles/:id', articlesRoutes.deleteArticle);
 
+router.get('/add_photos', (req, res) => {
+    const articleId = req.query.articleId;
+    res.sendFile(path.join(__dirname, 'client/html/add_photos.html'));
+});
+
+
 
 
 module.exports = router;
