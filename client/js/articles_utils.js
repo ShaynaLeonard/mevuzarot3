@@ -54,7 +54,7 @@ function displayArticles(articlesData) {
   $.each(articlesData, function (articleId, article) {
     var articleHtml = `
       <div>
-        <h3>Article ID: ${article.id}</h3>
+        <h3>Article id: ${article.id}</h3>
         <p>Title: ${article.title}</p>
         <p>Writer's Name: ${article.writer.name}</p>
         <p>Publish Date: ${article.publish_date}</p>
@@ -453,7 +453,9 @@ function openAddArticleForm() {
 // parameters: N/A 
 // return parameters:N/A 
 
+
 $('#addArticleAbove, #addArticleBelow').click(function () {
+  console.log($('#title1').val())
   openAddArticleForm();
 });
 
@@ -466,6 +468,8 @@ $('#formCloseBtn').click(function () {
   $('#addArticleForm').hide();
 });
 
+
+
 // name:  onclick listener for the saveArticleBtn button 
 // description : when clicked then the fields that the user filled in are checked (if needed, an alert 
 // is sent to the user) and then an ajax request is sent toadd a new article 
@@ -474,55 +478,50 @@ $('#formCloseBtn').click(function () {
 
 // Event listener for saving a new article
 $('#saveArticleBtn').click(function () {
-  console.log($('#' + 'title').val())
+
+  var title = $('#title1').val();
+  var publishDate = $('#publishDate').val();
+  var summary = $('#summary').val();
+  var writerName = $('#writerName').val();
+  var writerEmail = $('#writerEmail').val();
+  var mobilePhone = $('#mobilePhone').val();
+  var homePhone = $('#homePhone').val();
+  var articleId = $('#articleId').val();
 
 
   //change 
   $('.error-message').remove();
 
-  var requiredFields = ['title', 'publishDate', 'summary', 'writerName', 'writerEmail', 'mobilePhone', 'homePhone', 'articleId'];
-  var isValid = true;
-
-  requiredFields.forEach(function (fieldName) {
-    var fieldValue = $('#' + fieldName).val();
-
-
-    if (!fieldValue) {
-      // Display error message above the input field
-      console.log("field value", fieldValue)
-      $('<div class="error-message">*required</div>').insertBefore('#' + fieldName);
-      isValid = false;
-    }
-  });
-
-  if (!isValid) {
-    // If there are validation errors, stop processing the form
+  if (!title1|| !publishDate || !summary || !writerName || !writerEmail || !mobilePhone || !homePhone || !articleId) {
+    // Display error message or handle validation as needed
+    alert('Please fill in all required fields');
     return;
   }
 
 
+
   var newArticle = {
-    title: $('#title').val(),
-    publish_date: $('#publishDate').val(),
-    summary: $('#summary').val(),
+    title: title,
+    publish_date: publishDate,
+    summary: summary,
     writer: {
-      name: $('#writerName').val(),
-      email: $('#writerEmail').val(),
-      mobile_phone: $('#mobilePhone').val(),
-      home_phone: $('#homePhone').val(),
+      name: writerName,
+      email: writerEmail,
+      mobile_phone: mobilePhone,
+      home_phone: homePhone
     },
-    ID: $('#articleId').val(),
+    id: articleId
 
   };
 
   $.ajax({
 
-    url: '/articles/' + newArticle.ID, // Use the endpoint for fetching a single article
+    url: '/articles/' + newArticle.id, // Use the endpoint for fetching a single article
     type: 'GET',
     success: function (response) {
       // If the article already exists, inform the user and return
       console.log("got the article");
-      alert(`Article with ID ${newArticle.ID} already exists. You can only update existing articles.`);
+      alert(`Article with ID ${newArticle.id} already exists. You can only update existing articles.`);
     },
     error: function (xhr, status, error) {
       $.ajax({
@@ -553,7 +552,6 @@ $('#saveArticleBtn').click(function () {
     }
   });
 });
-
 
 
 

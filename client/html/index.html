@@ -11,44 +11,54 @@
 
 <body>
 
-  <h1>Articles</h1>
+  <h1>News:</h1>
 
-  <div class="displaySetting">
-    <fieldset>
-      <legend>Select a order:</legend>
+  <br>
+  <h2>Display Setting:</h2>
+  <div id="settingContainer">
 
-      <div>
-        <input type="radio" id="ascending" name="order" value="ascending" />
-        <label for="ascending">Ascending</label>
-      </div>
 
-      <div>
-        <input type="radio" id="descending" name="order" value="descending" checked />
-        <label for="descending">Descending</label>
-      </div>
+    <div class="displaySetting">
+      <fieldset>
+        <legend>Select a order:</legend>
 
-    </fieldset>
+        <div>
+          <input type="radio" id="ascending" name="order" value="ascending" />
+          <label for="ascending">Ascending</label>
+        </div>
+
+        <div>
+          <input type="radio" id="descending" name="order" value="descending" checked />
+          <label for="descending">Descending</label>
+        </div>
+
+      </fieldset>
+    </div>
+
+    <div class="displaySetting">
+      <fieldset>
+        <legend>Select a catergory:</legend>
+
+        <div>
+          <input type="radio" id="title" name="catergory" value="title" />
+          <label for="title">Title</label>
+        </div>
+
+        <div>
+          <input type="radio" id="dateOfPublication" name="catergory" value="dateOfPublication" checked />
+          <label for="dateOfPublication">Date of publication</label>
+        </div>
+
+      </fieldset>
+    </div>
+    <div class="displaySetting">
+      <button id="saveDisplayChanges">Save display changes</button>
+
+    </div>
+
   </div>
-  <div class="displaySetting">
-    <fieldset>
-      <legend>Select a catergory:</legend>
-
-      <div>
-        <input type="radio" id="title" name="catergory" value="title" />
-        <label for="title">Title</label>
-      </div>
-
-      <div>
-        <input type="radio" id="dateOfPublication" name="catergory" value="dateOfPublication" checked />
-        <label for="dateOfPublication">Date of publication</label>
-      </div>
-
-    </fieldset>
-  </div>
-  <div class="displaySetting">
-    <button id="saveDisplayChanges">Save display changes</button>
-
-  </div>
+<br>
+  <h2>Articles:</h2>
 
   <button id="addArticleAbove">Add Article</button>
 
@@ -60,17 +70,29 @@
     <div class="modal-content">
       <span class="close" id="modalCloseBtn">&times;</span>
       <h2>Edit Article</h2>
+      <br><br>
       <form id="editForm">
-        <label for="editTitle">Title:</label>
-        <input type="text" id="editTitle" name="editTitle">
+        <div class="partOfModal">
+          <label for="editTitle">Title:</label>
+          <input type="text" id="editTitle" name="editTitle">
+        </div>
 
-        <label for="editPublishDate">Publish Date:</label>
-        <input type="text" id="editPublishDate" name="editPublishDate" placeholder="yyyy-mm-dd">
-
-        <label for="editSummary">Summary:</label>
-        <textarea id="editSummary" name="editSummary"></textarea>
-
+        <br>
+        <br>
+        <div class="partOfModal">
+          <label for="editPublishDate">Publish Date:</label>
+          <input type="text" id="editPublishDate" name="editPublishDate" placeholder="yyyy-mm-dd">
+        </div>
+        <br>
+        <br>
+        <div class="partOfModal">
+          <label for="editSummary">Summary:</label>
+          <textarea id="editSummary" name="editSummary"></textarea>
+        </div>
+        <br>
+        <br>
         <button id="saveChangesBtn" type="button">Save Changes</button>
+        <br><br>
       </form>
     </div>
   </div>
@@ -82,8 +104,8 @@
       <h2>Add Article</h2>
       <form id="addArticleForm">
 
-        <label for="title">Title:</label>
-        <input type="text" id="title" name="title" required>
+        <label for="title1">Title:</label>
+        <input type="text" id="title1" name="title1" required>
         <br>
         <br>
 
@@ -127,8 +149,8 @@
         <label for="articleId">Article ID:</label>
         <input type="text" id="articleId" name="articleId" pattern="^[a-zA-Z0-9_]+$"
           title="ID must contain only letters and numbers" required>
-          <br>
-          <br>
+        <br>
+        <br>
 
 
         <button type="button" id="saveArticleBtn">Save Article</button>

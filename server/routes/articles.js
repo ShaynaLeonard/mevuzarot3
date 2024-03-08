@@ -107,7 +107,7 @@ const articleSchema = yup.object({
         mobile_phone: yup.string().required(),
         home_phone: yup.number().required(),
     }),
-    ID: yup.string().matches(/^[a-zA-Z0-9_]+$/, 'ID must contain only letters and numbers').required(),
+    id: yup.string().matches(/^[a-zA-Z0-9_]+$/, 'ID must contain only letters and numbers').required(),
 
 });
 
@@ -126,23 +126,25 @@ const CreateArticle = async (req, res) => {
 
         // Read data from file
         readFile(data => {
-            if (data[ArticleDetails.ID]){
-                console.log(`Article with ID ${ArticleDetails.ID} already exists. You can only update existing articles.`);
+            if (data[ArticleDetails.id]){
+                console.log(`Article with ID ${ArticleDetails.id} already exists. You can only update existing articles.`);
             }
             else{
             // Add the new article
-            data[ArticleDetails.ID] = {
-                title: ArticleDetails.title,
-                publish_date: ArticleDetails.publish_date,
-                writer: ArticleDetails.writer,
-                images: [], // Empty array for images
-                id: ArticleDetails.ID,
-            };
+            data[ArticleDetails.id] = {
+                            title: ArticleDetails.title,
+                            publish_date: ArticleDetails.publish_date,
+                            summary: ArticleDetails.summary,
+                            writer: ArticleDetails.writer,
+                            images: [], // Empty array for images
+                            id: ArticleDetails.id,
+                        };
+            
 
             // Write updated data to file
             writeFile(JSON.stringify(data, null, 2), () => {
                 console.log('New article added successfully');
-                res.status(200).send(`article id:${ArticleDetails.ID} created`);
+                res.status(200).send(`article id:${ArticleDetails.id} created`);
             });
      } }, true);
     } catch (error) {
